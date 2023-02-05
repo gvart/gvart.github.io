@@ -1,29 +1,35 @@
 +++
-author = "Hugo Authors"
-title = "Markdown Syntax Guide"
-date = "2019-03-11"
-description = "Sample article showcasing basic Markdown syntax and formatting for HTML elements."
+author = "Vladlen Gladis"
+title = "AWS Lambda using Spring Boot 3 and GraalVM"
+date = "2023-02-10"
+description = "How to build an AWS Lambda using Spring Boot 3 with GraalVM and custom runtime."
 featured = true
+keywords = [
+    "springboot",
+    "springboot3",
+    "graalvm",
+    "aws",
+    "serverless"
+]
 tags = [
-    "markdown",
-    "css",
-    "html",
-    "themes",
-    "featured"
+    "springboot",
+    "graalvm",
+    "aws",
+    "serverless"
 ]
 categories = [
-    "themes",
-    "syntax",
+    "Cloud"
 ]
-series = ["Themes Guide"]
-aliases = ["migrate-from-jekyl"]
-thumbnail = "images/building.png"
+thumbnail = "/images/post1_native_aws_lambda/thumbnail.png"
 +++
 
-This article offers a sample of basic Markdown syntax that can be used in Hugo content files, also it shows whether basic HTML elements are decorated with CSS in a Hugo theme.
+In this blog post, we'll dive into the world of serverless computing and show how to create an AWS Lambda function with custom runtime using **Spring Boot 3** and **GraalVM**. We'll be using Github Actions for building and testing our code, and deploying it to AWS using the Serverless Application Model (SAM).
+
+By the end of this tutorial, you'll have a solid understanding of how to create a scalable and efficient serverless application using modern technology. So let's get started!"
+
 <!--more-->
 
-## Headings
+## Prerequisite
 
 The following HTML `<h1>`—`<h6>` elements represent six levels of section headings. `<h1>` is the highest section level while `<h6>` is the lowest.
 

@@ -2,11 +2,18 @@
   name = "Home"
   url = ""
   weight = -110
-
+[[main]]
+  name = "Blog"
+  url = "post"
+  weight = -109
+[[main]]
+  name = "Tutorial"
+  url = "tutorial"
+  weight = -109
 [[main]]
   name = "About"
   url = "about/"
-  weight = -107
+  weight = -108
 
 # social menu links
 
@@ -18,7 +25,7 @@
 [[social]]
   name = "twitter"
   weight = 2
-  url = "https://twitter.com/GladisVladlen"
+  url = "https://twitter.com/VladlenGladis"
 [[social]]
   name = "linkedin"
   weight = 3
