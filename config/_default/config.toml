@@ -6,7 +6,7 @@ copyright = "GVART Blog"
 # canonifyurls = true
 paginate = 10
 theme = ["github.com/chipzoller/hugo-clarity"]
-disqusShortname = ""
+disqusShortname = "gvart-github-io"
 
 DefaultContentLanguage = "en"
 # [languages]

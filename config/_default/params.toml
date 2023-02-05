@@ -100,7 +100,7 @@ languageMenuName = "🌐"
 # titleSeparator = "|"
 
 # Enable or disable comments globally. Default to true.
-# comments = false
+comments = true
 
 # Enable or disable Utterances (https://github.com/utterance/utterances) Github Issue-Based Commenting
 # utterances = true  #Run the utterances script in the single.html layout to load https://utteranc.es comments
