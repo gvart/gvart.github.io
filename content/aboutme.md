@@ -7,7 +7,7 @@ author = "Vladlen Gladis"
 +++
 
 Hi, my name is **Vladlen Gladis** and I'm originally from a [small town](https://en.wikipedia.org/wiki/Str%C4%83%C8%99eni) in Moldova, I've been working as a software engineer since 2016.
-![:right::about-image round](../images/about_photo.png)
+![:right::about-image round](/images/about_photo.png)
 
 ### My experience
 One of my passions is mentoring and supporting other developers around me, and I believe that this is an
