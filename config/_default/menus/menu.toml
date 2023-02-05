@@ -9,11 +9,11 @@
 [[main]]
   name = "Tutorial"
   url = "tutorial"
-  weight = -109
+  weight = -108
 [[main]]
   name = "About"
-  url = "about/"
-  weight = -108
+  url = "aboutme/"
+  weight = -107
 
 # social menu links
 
