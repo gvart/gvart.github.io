@@ -45,7 +45,7 @@ This blog post will guide though steps how to build a production ready native AW
 * Github Repository *optional* (you may need it if want to automate deployments to AWS using Github Actions workflows)
 {{% /notice %}}
 
-## What is a native image, GraalVM, Spring Boot AOT rocessing and how do they connect ?
+## What is a Native Image, GraalVM, Spring Boot AOT processing, and How Do They Connect?
 GraalVM is a universal VM developed by Oracle JDK that is designed to accelerate the execution of applications written in Java and other JVM languages, supporting `JVM Runtime Mode`, `Java on Truffle` and `Native Image`, with the latter being the focus of this blog post.
 
 ### GraalVM
@@ -230,7 +230,7 @@ cd $LAMBDA_TASK_ROOT
 For the purpose of this implementation, we will focus on a common use case where AWS Lambda is triggered by a message from Amazon Simple Queue Service (SQS), performs some business logic on the message, and then persists the modified message in Amazon DynamoDB.
 ![Project HLD::polaroid](/images/post1_native_aws_lambda/aws_lambda_hld.png)
 ### Writing the code
-To prepare a runtime for the AWS Lambda we will need the followind dependencies in the plugins in the project:
+To prepare the runtime for the AWS Lambda, we will need to add the following plugins in the project:
 ```kotlin
 plugins {
     java
