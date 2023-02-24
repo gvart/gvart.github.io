@@ -1,5 +1,5 @@
 # enable search
-enableSearch = true
+enableSearch = false
 
 # socials
 twitter = "@VladlenGladis"
@@ -87,7 +87,7 @@ enforceLightMode = true
 # enforceDarkMode = false
 
 # customize footer icon. see issue https://github.com/chipzoller/hugo-clarity/issues/77
-# footerLogo = "icons/copy.svg"
+footerLogo = "icons/favicon-32x32.png"
 
 # Customize Sidebar Disclaimer Text
 # sidebardisclaimer = true

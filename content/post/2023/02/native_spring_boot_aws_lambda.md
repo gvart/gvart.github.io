@@ -1,12 +1,11 @@
 +++
 author = "Vladlen Gladis"
-title = "AWS Lambda using Spring Boot 3 and GraalVM"
+title = "Production ready AWS Lambda using Spring Boot 3 and GraalVM"
 date = "2023-02-24"
 description = "Building AWS Lambda with Spring Boot 3 and GraalVM Native Image: A Comprehensive Guide."
 featured = true
 toc = true
 draft = true
-
 keywords = [
     "AWS Lambda",
     "Spring Boot",
@@ -27,6 +26,7 @@ tags = [
 categories = [
     "Cloud"
 ]
+featureImage = "/images/post1_native_aws_lambda/thumbnail.png"
 thumbnail = "/images/post1_native_aws_lambda/thumbnail.png"
 +++
 
