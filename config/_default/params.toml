@@ -15,7 +15,7 @@ keywords = ["software design", "java", "spring boot", "aws", "blog", "reactive-p
 ga_analytics = ""
 
 # Google tag manager
-google_tag_manager_id = ""
+google_tag_manager_id = "G-JECGWJF0WM"
 
 # Baidu analytics Id
 # baidu_analytics = "XXXXXXXX"
