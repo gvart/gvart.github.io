@@ -1,6 +1,6 @@
 +++
 author = "Vladlen Gladis"
-title = "Production ready AWS Lambda using Spring Boot 3 and GraalVM"
+title = "Deep dive into AWS Lambda using Spring Boot 3 and GraalVM"
 date = "2023-02-24"
 description = "Building AWS Lambda with Spring Boot 3 and GraalVM Native Image: A Comprehensive Guide."
 featured = true
@@ -222,6 +222,9 @@ To create a custom runtime, you simply need to adhere to a straightforward speci
     ./application
     ```
 
+**To visualize the flow, we can use this flow diagram (see explanation below)**
+![AWS Custom runtime Flow Diagram::polaroid](/images/post1_native_aws_lambda/flow_diagram_custom_runtime.png)
+
 2. When the application starts up, it needs to perform several initialization steps to ensure it is ready to handle incoming requests efficiently:
    1. Load its configuration from environment variables: `_HANDLER`, `LAMBDA_TASK_ROOT`, `AWS_LAMBDA_RUNTIME_API`. *More information on how to do this can be found in the [documentation](https://docs.aws.amazon.com/lambda/latest/dg/runtimes-custom.html#runtimes-custom-build:~:text=Initialization%20tasks-,Retrieve%20settings,-%E2%80%93%20Read%20environment%20variables).*
    2. Initialize all heavy resources such as JDBC connections, SDK clients, etc. which can be reused across multiple invocations. This helps to avoid the overhead of repeatedly creating and destroying these resources with each request.
@@ -232,8 +235,6 @@ To create a custom runtime, you simply need to adhere to a straightforward speci
    3. The runtime returns a response by calling the **Invocation response** API.
    4. After completing the invocation, the runtime cleans up all the resources used in the current iteration. *This is important to prevent any resource leaks and ensure that the runtime is ready to handle the next incoming event.*
 
-**To visualize the flow, we can use this flow diagram.**
-![AWS Custom runtime Flow Diagram::polaroid](/images/post1_native_aws_lambda/flow_diagram_custom_runtime.png)
 
 ## Building an AWS Lambda with Spring Boot
 
@@ -264,14 +265,14 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 ```
-> 1. `spring-cloud-starter-function-web` provide the runtime for the function we'll be creating.
+> 1. `spring-cloud-starter-function-web` provides the runtime for the function we'll be creating.
 > 2. `spring-cloud-starter-function-adapter-aws` adjusts existing runtime and allows to use custom-runtime specification described earlier.
 
 
 To define a lambda handler (which serves as the entry point to the application), a bean of type `Consumer<T>`, `Function<T,R>`, or `Supplier<T>` needs to be registered in the Spring context. 
-> If we have multiple beans that implements any of these functional interfaces, the `spring.cloud.function.definition` property in the application.properties or application.yml file must be explicitly configured.
+> If we have multiple beans that implement any of these functional interfaces, the `spring.cloud.function.definition` property in the application.properties or application.yml file must be explicitly configured.
 
-For the given use case where a Lambda function consumes an event from SQS and saves it in DynamoDB, the implementation should use the `Consumer<SqsEvent>` interface. Here, `SqsEvent` represents an SQS object that can contain anywhere from 1 to 10 messages.
+For the given use case where a Lambda function consumes an event from SQS and saves it in DynamoDB, the implementation should use the `Consumer<SqsEvent>` interface. Here, `SqsEvent` represents an SQS object that can contain from 1 to 10 messages.
 ```java
 @Component
 public class LambdaFunction implements Consumer<SqsEvent> {
@@ -505,6 +506,39 @@ ENV JAVA_HOME /usr/lib/graalvm
 
 ENTRYPOINT ["sh"]
 ```
+
+### Deploying the Lambda function
+> **Note:** Before proceeding with deployment, make sure that:
+> 1. Docker has at least 4GB RAM.
+> 2. AWS credentials are properly configured on your local environment.
+> 3. You have sufficient permissions to create such resources as CloudFormation, S3, SQS, Lambda, and DynamoDB.
+
+1. Build the Docker image that SAM will use to assemble the native-image executable file by running the `./build-image.sh` script
+   ```shell
+    #!/bin/sh
+    set -e
+    
+    JAVA_VERSION=java17
+    GRAAL_VERSION=22.3.0
+    GRADLE_VERSION=7.6
+    
+    docker build --build-arg GRADLE_VERSION=$GRADLE_VERSION \
+    --build-arg JAVA_VERSION=$JAVA_VERSION \
+    --build-arg GRAAL_VERSION=$GRAAL_VERSION \
+    -t al2-graalvm:gradle .
+    ```
+2. Execute `sam build --use-container` command to build a deployable artifact. It will use the Docker container built in step 1 together with the **Makefile** created previously.
+3. Now artifact can be deployed (Don't forget to replace `<AWS_REGION>` placeholder).
+   ```shell
+    sam deploy \
+    --no-confirm-changeset \
+    --no-fail-on-empty-changeset \
+    --resolve-s3 \
+    --region <AWS_REGION> \
+    --capabilities CAPABILITY_IAM \
+    --stack-name every-note-persister
+   ```
+
 ### Testing the Lambda function
 To test created lambda function, I found several options that can be applied separately or combined for different situations.
 
@@ -615,38 +649,6 @@ To test created lambda function, I found several options that can be applied sep
     
     *I would recommend using this approach when we want to perform end-to-end (E2E) tests in a pre-production account or to perform load/performance tests within a real AWS environment, all these steps can be automated and also introduced as part of CI/CD.*
 
-
-### Deploying the Lambda function
-> **Note:** Before proceeding with deployment, make sure that:
-> 1. Docker has at least 4GB RAM.
-> 2. AWS credentials are properly configured on your local environment.
-> 3. You have sufficient permissions to create such resources as CloudFormation, S3, SQS, Lambda, and DynamoDB.
-
-1. Build the Docker image that SAM will use to assemble the native-image executable file by running the `./build-image.sh` script
-   ```shell
-    #!/bin/sh
-    set -e
-    
-    JAVA_VERSION=java17
-    GRAAL_VERSION=22.3.0
-    GRADLE_VERSION=7.6
-    
-    docker build --build-arg GRADLE_VERSION=$GRADLE_VERSION \
-    --build-arg JAVA_VERSION=$JAVA_VERSION \
-    --build-arg GRAAL_VERSION=$GRAAL_VERSION \
-    -t al2-graalvm:gradle .
-    ```
-2. Execute `sam build --use-container` command to build a deployable artifact. It will use the Docker container built in step 1 together with the **Makefile** created previously.
-3. Now artifact can be deployed (Don't forget to replace `<AWS_REGION>` placeholder). 
-   ```shell
-    sam deploy \
-    --no-confirm-changeset \
-    --no-fail-on-empty-changeset \
-    --resolve-s3 \
-    --region <AWS_REGION> \
-    --capabilities CAPABILITY_IAM \
-    --stack-name every-note-persister
-   ```
 ## It's time for automation (GitHub CI/CD workflows)
 We all like to be lazy and delegate our work to someone else, so let's delegate the building, testing, and deployment to a GitHub workflow.
 >**Note:** The workflows described below are pretty simple and can be adjusted based on your requirements.
