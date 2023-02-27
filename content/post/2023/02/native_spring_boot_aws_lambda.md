@@ -108,24 +108,33 @@ Now adding the `org.springframework.boot` plugin from version **3.0.0** and abov
 After a successful build of the projects the above class will be transformed in the following Java Configuration class(:exclamation: these classes are generated during the build time and later are used by GraalVM to build the final native artifact):
 
 ```java
+/** Bean definitions for {@link UseCaseConfig} */
 public class UseCaseConfig__BeanDefinitions {
-    public UseCaseConfig__BeanDefinitions() {
-    }
-
+    /** Get the bean definition for 'useCaseConfig' */
     public static BeanDefinition getUseCaseConfigBeanDefinition() {
         Class<?> beanType = UseCaseConfig.class;
         RootBeanDefinition beanDefinition = new RootBeanDefinition(beanType);
         ConfigurationClassUtils.initializeConfigurationClass(UseCaseConfig.class);
-        beanDefinition.setInstanceSupplier(UseCaseConfig..SpringCGLIB..0::new);
+        beanDefinition.setInstanceSupplier(UseCaseConfig$$SpringCGLIB$$0::new);
         return beanDefinition;
     }
 
+    /** Get the bean instance supplier for 'processNoteRequest'. */
     private static BeanInstanceSupplier<ProcessNoteRequest> getProcessNoteRequestInstanceSupplier() {
-        return BeanInstanceSupplier.forFactoryMethod(UseCaseConfig.class, "processNoteRequest", new Class[]{ReadSqsMessageBody.class, SaveNoteRequest.class}).withGenerator((registeredBean, args) -> {
-            return ((UseCaseConfig)registeredBean.getBeanFactory().getBean(UseCaseConfig.class)).processNoteRequest((ReadSqsMessageBody)args.get(0), (SaveNoteRequest)args.get(1));
-        });
+        return BeanInstanceSupplier.<ProcessNoteRequest>forFactoryMethod(
+                        UseCaseConfig.class,
+                        "processNoteRequest",
+                        ReadSqsMessageBody.class,
+                        SaveNoteRequest.class)
+                .withGenerator(
+                        (registeredBean, args) ->
+                                registeredBean
+                                        .getBeanFactory()
+                                        .getBean(UseCaseConfig.class)
+                                        .processNoteRequest(args.get(0), args.get(1)));
     }
 
+    /** Get the bean definition for 'processNoteRequest' */
     public static BeanDefinition getProcessNoteRequestBeanDefinition() {
         Class<?> beanType = ProcessNoteRequest.class;
         RootBeanDefinition beanDefinition = new RootBeanDefinition(beanType);
