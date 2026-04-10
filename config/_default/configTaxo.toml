@@ -1,6 +1,5 @@
 timeout = 30000
 enableInlineShortcodes = true
-footnoteReturnLinkContents = "^"
 
 [privacy]
 
@@ -8,7 +7,7 @@ footnoteReturnLinkContents = "^"
 disabled = false
 simple = true
 
-[privacy.twitter]
+[privacy.x]
 disabled = false
 enableDNT = true
 simple = true
