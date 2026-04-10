@@ -4,7 +4,6 @@ baseurl = "https://gvart.dev/"  # Include trailing slash
 # title = "Clarity"  # Edit directly from config/_default/languages.toml # alternatively, uncomment this and remove `title` entry from the aforemention file.
 copyright = "GVART Blog"
 # canonifyurls = true
-paginate = 10
 theme = ["github.com/chipzoller/hugo-clarity"]
 # disqusShortname = "gvart-github-io"
 
@@ -15,6 +14,10 @@ DefaultContentLanguage = "en"
 # [menus]
 # config/_default/menus/menu.xx.toml
 enableEmoji = true
+
+[pagination]
+pagerSize = 10
+
 [taxonomies]
 category = "categories"
 tag = "tags"
