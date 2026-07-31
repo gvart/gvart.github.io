@@ -29,8 +29,9 @@ keywords = [
     "sockets",
     "web server"
 ]
+# `java` is deliberately not a tag: the category is already "Java", and both
+# render as identical uppercase chips, so the card showed "JAVA JAVA".
 tags = [
-    "java",
     "diy",
     "diy-webserver",
 ]
