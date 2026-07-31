@@ -1,0 +1,108 @@
+content/post/2023/02/native_spring_boot_aws_lambda/index.md
+  s_a4bfedf02d8acb::t_d041b55e803e5b 4
+  s_a4bfedf02d8acb::t_42cb290c15c03e 473-475
+  s_a4bfedf02d8acb::t_e525ba5519e85e 6
+  s_a4bfedf02d8acb::t_461c856d845a07 251-253
+  s_a4bfedf02d8acb::t_e25cce2215c211 728
+  s_a4bfedf02d8acb::t_0b017f3fe546f5 149-150
+  s_a4bfedf02d8acb::t_6abbd7f07aa980 170-201
+  s_a4bfedf02d8acb::t_6f1cce29d5ad26 61-62
+  s_a4bfedf02d8acb::t_d0fe2a7a521cc6 213-214
+  s_a4bfedf02d8acb::t_d2ac9407adce66 654-664
+  s_a4bfedf02d8acb::t_43d591ad5be9a4 670-671
+  s_a4bfedf02d8acb::t_b36537ed405194 165-166
+  s_a4bfedf02d8acb::t_b4d3f6707e812b 232-233
+  s_a4bfedf02d8acb::t_d8e1adf7f55a75 522
+  s_a4bfedf02d8acb::t_9f275bf007af20 46-53
+.github/workflows/hugo.yml
+  s_a4bfedf02d8acb::t_3e0db47345e00a 33-34
+  s_a4bfedf02d8acb::t_95aef30a90a9a9 43-48,50-51
+.gitignore
+  s_a4bfedf02d8acb::t_99eaf96dc53e2d 19-24
+go.mod
+  s_a4bfedf02d8acb::t_a44a6a0a3edc3a 5-7
+content/post/_index.md
+  s_a4bfedf02d8acb::t_2482fc6efcb5f6 3-8
+content/post/2026/07/why_not_web_server_part_0_basics/index.md
+  s_a4bfedf02d8acb::t_4775e0fc021bf8 42-43
+  s_a4bfedf02d8acb::t_5220ba824e4ea1 66-105,116-163
+  s_a4bfedf02d8acb::t_e93bcef2ecb9d5 5-28
+  s_a4bfedf02d8acb::t_da5f839658c58a 115
+  s_a4bfedf02d8acb::t_909114064cd184 65
+config/_default/languages.en.toml
+  s_a4bfedf02d8acb::t_613ff3a2cb6857 1-49
+content/aboutme.md
+  s_a4bfedf02d8acb::t_7eb4d71247e249 3,11,13,15-25
+  s_a4bfedf02d8acb::t_0094fb1aaa77e3 8-9
+config/_default/menus.en.toml
+  s_a4bfedf02d8acb::t_dcd8f9831b870c 1-47
+static/site.webmanifest
+  s_a4bfedf02d8acb::t_76b51922f824d1 1-11
+layouts/_default/_markup/render-image.html
+  s_a4bfedf02d8acb::t_76d7e49ecbec1c 1-137
+layouts/_default/_markup/render-codeblock.html
+  s_a4bfedf02d8acb::t_ce7c6a0bcaf76d 1-19
+i18n/en.yaml
+  s_a4bfedf02d8acb::t_d4ac19922ec2e1 1-8
+assets/css/custom.css
+  s_a4bfedf02d8acb::t_559133d3ba1377 1-179,198,201-202,209,223,225-250,254-275,288-289,296,298,304,314,330-331,333,344-356,358,363-364,367-371,389-393,397-398,401,404,409,422,429-454,461-464,466,468-469,471-481,486-490,493,495-502,515-551,556-1014,1020-1060
+  s_a4bfedf02d8acb::t_a427824aa63b9e 1015-1019
+  s_a4bfedf02d8acb::t_51486809deb9fa 299,301,303
+  s_a4bfedf02d8acb::t_29eafafcbc9594 552-555
+  s_a4bfedf02d8acb::t_94551b80c1fdc7 357,359-362,365-366,372-388,394-396,399-400,402-403,405-408,410-421,423-428
+  s_a4bfedf02d8acb::t_7cd407bbc175fc 315-323
+  s_a4bfedf02d8acb::t_2ebbdf6dcf8ef2 180-197,199-200,203-208,210-222,224
+  s_a4bfedf02d8acb::t_6d68251831255f 251-253
+  s_a4bfedf02d8acb::t_6c444727eee827 276-287,290-295,297,300,302,305-313,324-329,332,334-343
+  s_a4bfedf02d8acb::t_51437dff0d2e50 455-460,465,467,470,482-485,491-492,494,503-514
+layouts/partials/home/custom.html
+  s_a4bfedf02d8acb::t_b59041e8fd5e8d 1-49,58
+  s_a4bfedf02d8acb::t_dcb91de3de9c12 50-57
+config/_default/params.toml
+  s_a4bfedf02d8acb::t_b553b8ef00d1cb 1-15,17-73,76-94,98-111,113,117-155
+  s_a4bfedf02d8acb::t_d4dd8c7fd1e7ed 74
+  s_a4bfedf02d8acb::t_1adb671dbeecd8 95-97
+  s_a4bfedf02d8acb::t_a1f40b88fafb3c 112,114-116
+  s_a4bfedf02d8acb::t_c95d0b6b1c66dd 75
+config/_default/hugo.toml
+  s_a4bfedf02d8acb::t_e3824b34ff4713 1-28,31,33-37,39-46,48,50-82
+content/tutorial/2023/manage_multiple_jdk/index.md
+  s_a4bfedf02d8acb::t_8a499223c1faba 24
+  s_a4bfedf02d8acb::t_8c09cbd33a5b11 4
+  s_a4bfedf02d8acb::t_2d4a86fa294ee1 5-12,14-15,18
+  s_a4bfedf02d8acb::t_89da8947167d06 35-89
+content/_index.md
+  s_a4bfedf02d8acb::t_47eec92b9bfeea 2-5
+  s_a4bfedf02d8acb::t_5ebebde10a683a 6-8
+  s_a4bfedf02d8acb::t_b73333346934b5 9
+assets/css/schemes/drawing-set.css
+  s_a4bfedf02d8acb::t_44a76ca3407afb 90-94
+  s_a4bfedf02d8acb::t_d6213240fa448e 1-89,95-153
+config/_default/markup.toml
+  s_a4bfedf02d8acb::t_5c1da48e32ebbe 1-10,12-20,22-23,25,28-58
+content/tutorial/_index.md
+  s_a4bfedf02d8acb::t_00722d591b90fa 3-7
+layouts/partials/comments.html
+  s_a4bfedf02d8acb::t_7be5623b7a16a6 1-53,62,64-65,74-82
+  s_a4bfedf02d8acb::t_da18d2f6cc3a7d 54-61,63,66-73
+config/_default/module.toml
+  s_a4bfedf02d8acb::t_913d108747b940 1-5
+go.sum
+  s_a4bfedf02d8acb::t_59d8a27c84924e 1-2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "48211232b33221496a399aa4c030796c6049a091",
+  "prompts": {},
+  "sessions": {
+    "s_a4bfedf02d8acb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4fccd82b-4c40-4c86-9292-4b188bb2ca1d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vladlen Gladis <vladlen.gladis@deliveryhero.com>"
+    }
+  }
+}
