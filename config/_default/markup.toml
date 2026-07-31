@@ -1,17 +1,58 @@
+# -- Markup --
+# Self-contained on purpose. Hugo's theme->project merge strategy for the
+# `markup` root key is "none", so NOTHING here is inherited from Blowfish --
+# every setting the theme needs must be repeated.
+#
+# The previous version of this file nested [highlight] *inside* [goldmark],
+# which resolved to markup.goldmark.highlight and was silently ignored.
+# Clarity masked that by highlighting client-side; Blowfish uses server-side
+# Chroma, so the block has to be at the top level to have any effect.
+
 [goldmark]
+  [goldmark.parser]
+    # REQUIRED by Blowfish: lets a standalone image become a block-level
+    # <figure>, which is what the plate render hook styles.
+    wrapStandAloneImageWithinParagraph = false
+
+    [goldmark.parser.attribute]
+      # REQUIRED: enables the {class="..."} escape hatch on images/blockquotes.
+      block = true
+
   [goldmark.renderer]
+    # REQUIRED: content contains raw <kbd> and <br>.
+    unsafe = true
     hardWraps = false
-    unsafe = true # change to false to disable inclusion of rawHTML and math functions
-    xhtml = false
+
   [goldmark.extensions]
     typographer = false
-  [highlight]
-    codeFences = true
-    guessSyntax = true
-    hl_Lines = "--"
-    lineNoStart = 1
-    lineNos = true # always set to true # else line numbers won't show at all! even when you toggle them on in the UI
-    lineNumbersInTable = false # toggling this on (i.e to true) or deleting this line will break the code blocks functionality. Will
-    noClasses = false
-    # style = "monokai"
-    tabWidth = 2
+
+    [goldmark.extensions.passthrough]
+      enable = true
+      [goldmark.extensions.passthrough.delimiters]
+        block = [['\[', '\]'], ['$$', '$$']]
+        inline = [['\(', '\)']]
+
+[highlight]
+  # REQUIRED: class-based output, so the per-scheme Chroma stylesheet applies.
+  # noClasses = true would inline one fixed palette and break dark mode.
+  noClasses = false
+  codeFences = true
+
+  # Was true, which mislabels the unlabelled fences and emits wrong tokens.
+  guessSyntax = false
+
+  # Off globally: numbering all fences (447 line spans in the flagship post)
+  # makes the gutter the loudest element on the page, and no prose references
+  # a line number. Opt in per fence with ```java {linenos=table}
+  lineNos = false
+  lineNumbersInTable = true
+
+  tabWidth = 4
+  hl_inline = false
+  # `style` is irrelevant while noClasses = false.
+
+[tableOfContents]
+  startLevel = 2
+  # 3, not 4: the flagship post has 7 h2 plus 7 h3/h4, and endLevel = 4 makes
+  # the rail longer than #TOCView's max-height.
+  endLevel = 3

@@ -1,0 +1,47 @@
+# -- Menus: English --
+# Replaces config/_default/menus/menu.toml. Hugo keys config files by
+# *basename*, so the old `menus/` directory was meaningless -- `menu.toml`
+# worked only because RenameKeys aliases `menu` -> `menus`.
+#
+# Blowfish has NO [[social]] menu. Social icons come from
+# params.author.links in languages.en.toml.
+
+# -- Main menu (site header) --
+# pageRef is resolved to .URL by Hugo. Clarity's `url = ""` for Home would
+# emit an empty href; pageRef = "/" yields "/".
+
+[[main]]
+  name = "Blog"
+  pageRef = "/post"
+  weight = 10
+
+[[main]]
+  name = "Tutorials"
+  pageRef = "/tutorial"
+  weight = 20
+
+[[main]]
+  name = "About"
+  pageRef = "/aboutme"
+  weight = 30
+
+# -- Footer menu --
+# Taxonomy entry points live here rather than the header, keeping the header
+# to the three things a reader actually navigates to.
+
+[[footer]]
+  name = "Categories"
+  pageRef = "/categories"
+  weight = 10
+
+[[footer]]
+  name = "Tags"
+  pageRef = "/tags"
+  weight = 20
+
+[[footer]]
+  identifier = "rss"
+  pre = "rss"
+  url = "/index.xml"
+  title = "RSS"
+  weight = 30

@@ -1,10 +1,15 @@
 +++
-author = "Vladlen Gladis"
 title = "Manage multiple JDKs smart not hard"
 date = "2023-02-05"
-categories = ["tutorials"]
-description = "Let's explore what is the benefit of using an SDK manager in jvm world"
-thumbnail = "https://sdkman.io/assets//img/sdk-man-small-pattern.svg"
+description = "Why a JDK manager is worth the five minutes it takes to install, and how to switch between JDKs in seconds with SDKMAN."
+draft = false
+showTableOfContents = true
+categories = ["Tutorials"]
+tags = [
+    "sdkman",
+    "jdk",
+    "graalvm"
+]
 keywords = [
     "sdkman",
     "jdk",
@@ -16,9 +21,7 @@ keywords = [
 In this blog post, we'll discuss why it's crucial to use an SDK manager as a java developer and how to install and switch between JDKs in a few seconds.
 <!--more-->
 
-# Why should you an SDK manager and why SDKMAN is a crucial tool for a java developer ?
-
-![SDK Man Logo::img-small](https://sdkman.io/assets//img/sdk-man-small-pattern.svg)
+## Why should you use an SDK manager, and why is SDKMAN a crucial tool for a Java developer?
 
 As a Java developer, it is common to work with different versions of Java:
 * To try out new features in the latest JDK.
@@ -29,7 +32,7 @@ Switching between different JDKs and updating the current JDK involves updating 
 
 To simplify this process, SDKMAN comes to the rescue. SDKMAN is a lightweight software written in Bash that requires only `curl` and `zip/unzip` to install, uninstall, update, or switch your JDKs.
 
-#### Installing SDKMAN
+### Installing SDKMAN
 
 ```bash
 curl -s "https://get.sdkman.io" | bash
@@ -44,14 +47,15 @@ sdk version
 [Official installation guide](https://sdkman.io/install)
 
 
-#### Using SDKMAN
+### Using SDKMAN
 1. **Finding the necessary JDK**
    To discover all available distributions of JDKs, use the following command:
    ```bash
    sdk list java
    ```
    The result will be a vast list of different JDK types, starting with Java 1.7 and ending with the latest releases.
-   ![sdk list java result](/images/2023/tutorial/sdk_man/sdk_list.png)
+
+   ![Result of sdk list java](sdk_list.png "sdk list java — available JDK distributions")
 
 2. **Installing JDK 19 and GraalVM 22.3 with Java 19**
    * Installing JDK 19
@@ -64,10 +68,10 @@ sdk version
        sdk install java 22.3.r19-grl
        ```
 
-{{% notice info "Note" %}}
-SDKMAN comes with auto-complete feature, that allows you to get the Java version by pressing <kbd>Tab</kbd> key
- ![installation process](/images/2023/tutorial/sdk_man/sdk_man_install_java.gif)
-{{% /notice %}}
+> [!NOTE]
+> SDKMAN comes with an auto-complete feature that lets you fill in the Java version by pressing <kbd>Tab</kbd>.
+>
+> ![Installing a JDK with SDKMAN tab-completion](sdk_man_install_java.gif)
 
 3. **Switching between Java versions**
 To switch between installed JDKs, use the `default` command:
@@ -82,7 +86,7 @@ sdk default java 22.3.r19-grl
 ```
 This will update the symlinks and `JAVA_HOME` to the `22.3.r19-grl` JDK
 
-#### Conclusion
+### Conclusion
 If you have to work with multiple JDK, **SDKMAN** is a perfect
 tool that allows easily to manage JDKs, update existing JDK to the latest security patches, and switch quickly between various versions of java.
 Apart from being in change of JDKs, SDKMAN can manage different build toolss like maven, gradle,ant, etc. that can be useful for someone.

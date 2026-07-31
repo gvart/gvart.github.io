@@ -1,0 +1,153 @@
+/* ==========================================================================
+   Drawing Set — Blowfish colour scheme
+   ==========================================================================
+   Anchors: ground #0B1B2B · surface #12283D · drafting cyan #5FD3D0
+            text #E8EEF2 · annotation amber #F0A35E
+
+   Values are comma-separated RGB triplets with no rgb() wrapper: Blowfish's
+   tailwind.config.js wraps each one as rgba(var(--color-x), <alpha-value>),
+   so a hex value here silently produces an invalid colour.
+
+   A Blowfish scheme defines exactly ONE ramp, used in BOTH appearances --
+   there is no .dark selector in any built-in scheme. The inversion happens in
+   the markup: baseof.html applies
+     bg-neutral text-neutral-900  dark:bg-neutral-800 dark:text-neutral
+   which makes --color-neutral (DEFAULT) dual-purpose and load-bearing:
+   it is the LIGHT page background AND the DARK body text colour.
+
+   Ramps were walked on CIE L* rather than lerped in sRGB, then endpoints were
+   pulled until every real usage site clears WCAG AA. Three deliberate
+   non-uniformities are noted inline.
+   ========================================================================== */
+
+:root {
+  /* -- Neutral: cool blue-grey, hue ~207deg --------------------------------
+     NOTE neutral-50 is LIGHTER than the DEFAULT (L* 97.0 vs 93.8). This
+     mirrors stock Blowfish (white DEFAULT vs #f8fafc 50) and is what makes
+     light mode work: paper is #E8EEF2, so --tw-prose-pre-bg (neutral-50)
+     reads as an inset lighter panel while bg-neutral-100 chips read as
+     darker tabs. A monotonic ramp would make one of the two invisible.     */
+  --color-neutral: 232, 238, 242;        /* #E8EEF2  L* 93.8  dark text / light paper */
+  --color-neutral-50: 243, 247, 250;     /* #F3F7FA  L* 97.0  light code panel */
+  --color-neutral-100: 218, 229, 237;    /* #DAE5ED  L* 90.3  light chip / TOC summary */
+  --color-neutral-200: 194, 212, 224;    /* #C2D4E0  L* 83.9  dark code foreground */
+  --color-neutral-300: 162, 186, 203;    /* #A2BACB  L* 74.3  dark prose / light hairline */
+  --color-neutral-400: 122, 150, 172;    /* #7A96AC  L* 60.7  dark meta, comments, captions */
+  --color-neutral-500:  79, 107, 132;    /* #4F6B84  L* 44.0  light meta, captions */
+  --color-neutral-600:  55,  83, 107;    /* #37536B  L* 34.1  dark chip bg, card hairline */
+  --color-neutral-700:  27,  55,  82;    /* #1B3752  L* 22.2  dark chip / light prose body */
+  --color-neutral-800:  11,  27,  43;    /* #0B1B2B  L*  9.2  GROUND — dark page background */
+  --color-neutral-900:   6,  19,  32;    /* #061320  L*  5.5  light body text */
+
+  /* -- Primary: drafting cyan, anchored at 400 ----------------------------
+     NOTE the ramp is front-loaded (steps of 15/16/19 across 400->700 vs
+     Tailwind's uniform ~8). The anchor #5FD3D0 is unusually light for a 400
+     (L* 78), and --tw-prose-links (primary-600) has to clear 4.5:1 against
+     L* 94 paper, which forces primary-600 to L* <= 46. Compressing the top
+     of the ramp is the only way to honour the anchor and still pass AA.    */
+  --color-primary-50: 236, 251, 250;     /* #ECFBFA */
+  --color-primary-100: 212, 245, 243;    /* #D4F5F3  numeric literals (dark) */
+  --color-primary-200: 174, 234, 232;    /* #AEEAE8  annotations, skip-link bg */
+  --color-primary-300: 133, 223, 220;    /* #85DFDC  types, YAML keys */
+  --color-primary-400:  95, 211, 208;    /* #5FD3D0  ANCHOR — dark links, keywords, focus */
+  --color-primary-500:  53, 168, 165;    /* #35A8A5  dark accent, plate numbers */
+  --color-primary-600:  21, 116, 114;    /* #157472  light links */
+  --color-primary-700:  15,  91,  89;    /* #0F5B59  light badges, light focus ring */
+  --color-primary-800:  12,  71,  70;    /* #0C4746  dark series chip */
+  --color-primary-900:  10,  56,  55;    /* #0A3837 */
+
+  /* -- Secondary: graphite cyan (steel) -----------------------------------
+     NOTE secondary is NOT amber. --tw-prose-code resolves to secondary-700
+     (light) / secondary-400 (dark), i.e. secondary IS the inline <code>
+     colour -- and the flagship post is dense with inline code. Amber there
+     would violate "annotation amber, callouts only". Amber instead ships as
+     --dwg-annotation and reaches the callouts via the --adm-* variables.   */
+  --color-secondary-50: 241, 245, 248;   /* #F1F5F8 */
+  --color-secondary-100: 223, 233, 239;  /* #DFE9EF */
+  --color-secondary-200: 198, 215, 225;  /* #C6D7E1 */
+  --color-secondary-300: 166, 191, 206;  /* #A6BFCE  shell vars, attribute names */
+  --color-secondary-400: 143, 173, 191;  /* #8FADBF  inline code (dark) */
+  --color-secondary-500: 104, 139, 159;  /* #688B9F */
+  --color-secondary-600:  76, 107, 127;  /* #4C6B7F */
+  --color-secondary-700:  58,  85, 104;  /* #3A5568  inline code (light) */
+  --color-secondary-800:  46,  67,  83;  /* #2E4353 */
+  --color-secondary-900:  36,  53,  66;  /* #243542 */
+
+  /* ======================================================================
+     Drawing-set design tokens. Not part of Blowfish's contract -- declared
+     here so light/dark flipping for plates, graticule, spine and code lives
+     in exactly one file. These are LIGHT-appearance values.
+     ====================================================================== */
+  --dwg-ground: #E8EEF2;            /* MUST equal the page background */
+  --dwg-surface: #F3F7FA;           /* plate field, code panel */
+  --dwg-frame: #4E7C7A;             /* plate hairline — 4.00:1 (WCAG 1.4.11) */
+  --dwg-rule: #9FB6BF;              /* quiet dividers, list spine */
+  --dwg-rule-strong: #6E8E9B;       /* per-item spine tick */
+  --dwg-graticule: rgba(15, 91, 89, 0.10);
+  --dwg-plate-no: #0F5B59;          /* 6.74:1 on paper */
+  --dwg-caption: #4F6B84;           /* 4.76:1 on paper */
+  --dwg-focus: #0F5B59;             /* 6.74:1 on paper */
+  /* Amber darkened enough to be legible as light-mode TEXT. The anchor
+     #F0A35E is only 1.78:1 on paper, and an intermediate #B4650F still
+     measured 3.73:1 -- below AA. This clears 5.02:1 on BOTH the paper and
+     the amber callout background, so it is safe wherever it is used. */
+  --dwg-annotation: #985309;
+  --dwg-annotation-line: #F0A35E;   /* the true anchor amber — rule/icon only */
+  --dwg-annotation-bg: #FAEBDA;
+  --dwg-annotation-ink: #6E3708;    /* 8.12:1 on --dwg-annotation-bg */
+
+  /* Chroma tokens — LIGHT */
+  --dwg-code-bg: #F3F7FA;
+  --dwg-code-fg: #1B3752;
+  --dwg-code-dim: #4F6B84;
+  --dwg-code-comment: #4F6B84;
+  --dwg-code-keyword: #0F5B59;
+  --dwg-code-type: #157472;
+  --dwg-code-name: #0B1B2B;
+  --dwg-code-string: #061320;
+  --dwg-code-number: #157472;
+  --dwg-code-var: #3A5568;
+  --dwg-code-op: #37536B;
+  --dwg-code-lineno: #7A96AC;
+  --dwg-code-hl: rgba(21, 116, 114, 0.10);
+  --dwg-code-err: #A33A22;
+  --dwg-code-ins: #1F6B45;
+}
+
+/* DARK appearance. The 31 --color-* values above are shared; only the
+   drawing-set tokens flip. */
+html.dark {
+  --dwg-ground: #0B1B2B;            /* == neutral-800, the page background */
+  --dwg-surface: #12283D;           /* the specified raised surface */
+  --dwg-frame: #35777E;             /* 3.39:1 on ground (WCAG 1.4.11) */
+  --dwg-rule: #234F59;
+  --dwg-rule-strong: #35777E;
+  --dwg-graticule: rgba(95, 211, 208, 0.07);
+  --dwg-plate-no: #35A8A5;          /* 6.05:1 on ground */
+  --dwg-caption: #7A96AC;           /* 5.63:1 on ground */
+  --dwg-focus: #5FD3D0;             /* 9.71:1 on ground */
+  --dwg-annotation: #F0A35E;        /* 8.38:1 on ground — the anchor amber */
+  --dwg-annotation-line: #F0A35E;
+  --dwg-annotation-bg: #222930;     /* amber @ ~10% over the ground */
+  --dwg-annotation-ink: #E8EEF2;    /* 12.57:1 on --dwg-annotation-bg */
+
+  /* Chroma tokens — DARK. Encoded by lightness, not hue: strings are the
+     brightest thing (the payload), punctuation the dimmest (structure
+     recedes), cyan carries keywords and types. The two dimmest tokens sit at
+     4.86:1, so nothing in 19 code blocks drops below AA. */
+  --dwg-code-bg: #12283D;
+  --dwg-code-fg: #C2D4E0;           /*  9.87:1 */
+  --dwg-code-dim: #7A96AC;          /*  4.86:1 */
+  --dwg-code-comment: #7A96AC;      /*  4.86:1 */
+  --dwg-code-keyword: #5FD3D0;      /*  8.39:1 */
+  --dwg-code-type: #85DFDC;         /*  9.73:1 */
+  --dwg-code-name: #E8EEF2;         /* 12.85:1 */
+  --dwg-code-string: #E8EEF2;       /* 12.85:1 */
+  --dwg-code-number: #D4F5F3;       /* 13.00:1 */
+  --dwg-code-var: #A6BFCE;          /*  7.90:1 */
+  --dwg-code-op: #A2BACB;           /*  7.46:1 */
+  --dwg-code-lineno: #6B87A0;       /*  4.00:1 — non-content, exempt */
+  --dwg-code-hl: rgba(95, 211, 208, 0.10);
+  --dwg-code-err: #E8927E;
+  --dwg-code-ins: #7FD3A8;
+}

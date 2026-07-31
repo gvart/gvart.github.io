@@ -1,0 +1,49 @@
+# -- Language: English --
+# Replaces the old languages.toml, which used an [en] table. Hugo derives the
+# language from this file's *basename* (languages.en.toml -> languages.en),
+# so the body must be flat.
+
+disabled = false
+locale = "en"
+label = "English"
+weight = 1
+title = "GVART's Blog"
+
+[params]
+  displayName = "EN"
+  isoCode = "en"
+  rtl = false
+
+  # ISO dates, to match the drafting-annotation metadata line
+  # (2023-02-24 · 18 min · Cloud).
+  dateFormat = "2006-01-02"
+
+  # `logo` is deliberately NOT set. Blowfish's header/basic.html guards the
+  # site title with `not .Site.Params.disableTextInHeader | default true`,
+  # which parses as `default true (not X)` and is therefore always true --
+  # the title text always renders. Setting a logo would show bitmap AND text.
+
+  description = "Deep dives on the JVM -- GraalVM native images, Spring Boot internals, AWS architecture, and the occasional web server built from scratch."
+
+  # Blowfish substitutes the literal "{ year }" (with spaces) in footer.html
+  # and rss.xml. Replaces Clarity's separate `since = 2023`.
+  copyright = "© 2023-{ year } Vladlen Gladis"
+
+[params.author]
+  name = "Vladlen Gladis"
+  # resources.Get reads assets/ ONLY -- never static/. See Phase 3.
+  image = "images/about_photo.png"
+  imageQuality = 96
+  headline = "Software engineer. JVM, Spring, and AWS architecture."
+  bio = "Working as a software engineer since 2016. Java and Kotlin, the Spring ecosystem, and distributed systems on AWS."
+
+  # Must be a slice of single-key maps: author-links.html ranges the slice,
+  # then ranges each map, using the key as BOTH the icon name and the
+  # aria-label. One key per entry preserves display order (a multi-key table
+  # would iterate in sorted key order instead).
+  links = [
+    { github = "https://github.com/gvart" },
+    { linkedin = "https://www.linkedin.com/in/vladlen-gladish-77788210b/" },
+    { x-twitter = "https://twitter.com/VladlenGladis" },
+    { rss = "/index.xml" },
+  ]

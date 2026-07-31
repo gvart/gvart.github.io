@@ -1,0 +1,82 @@
+{{- /* ==========================================================================
+   giscus comments, synced to Blowfish's JS-driven appearance toggle.
+
+   Blowfish has no built-in giscus support, and single.html only calls this
+   partial when article.showComments is true (it defaults to FALSE and is
+   absent from the theme's own params.toml, so it must be set explicitly).
+
+   Appearance sync: assets/js/appearance.js toggles the `dark` class on <html>
+   from #appearance-switcher / #appearance-switcher-mobile WITHOUT reloading
+   and WITHOUT dispatching any event, so there is nothing to listen for except
+   the class attribute itself. A MutationObserver on documentElement catches
+   the desktop switcher, the mobile switcher and the prefers-color-scheme
+   listener in one hook. giscusTheme = "preferred_color_scheme" would desync
+   the moment a reader overrides the OS setting.
+
+   Config: config/_default/params.toml -> [giscus]
+   mapping = "pathname" MUST NOT change: existing GitHub Discussions threads
+   are keyed on the URL path.
+   ========================================================================== */ -}}
+{{- $g := site.Params.giscus -}}
+{{- if and $g $g.repo $g.repoId -}}
+  <div id="giscus-container" class="giscus"></div>
+  <script>
+    (function () {
+      var container = document.getElementById("giscus-container");
+      if (!container) return;
+
+      var ORIGIN = "https://giscus.app";
+      var LIGHT = {{ $g.lightTheme | default "light" }};
+      var DARK = {{ $g.darkTheme | default "dark" }};
+
+      function currentTheme() {
+        return document.documentElement.classList.contains("dark") ? DARK : LIGHT;
+      }
+
+      var s = document.createElement("script");
+      s.src = ORIGIN + "/client.js";
+      s.async = true;
+      s.crossOrigin = "anonymous";
+      s.setAttribute("data-repo", {{ $g.repo }});
+      s.setAttribute("data-repo-id", {{ $g.repoId }});
+      s.setAttribute("data-category", {{ $g.category | default "General" }});
+      s.setAttribute("data-category-id", {{ $g.categoryId }});
+      s.setAttribute("data-mapping", {{ $g.mapping | default "pathname" }});
+      s.setAttribute("data-strict", {{ $g.strict | default "0" }});
+      s.setAttribute("data-reactions-enabled", {{ $g.reactionsEnabled | default "1" }});
+      s.setAttribute("data-emit-metadata", {{ $g.emitMetadata | default "0" }});
+      s.setAttribute("data-input-position", {{ $g.inputPosition | default "bottom" }});
+      s.setAttribute("data-lang", {{ $g.lang | default "en" }});
+      s.setAttribute("data-loading", "lazy");
+      s.setAttribute("data-theme", currentTheme());
+      container.appendChild(s);
+
+      // giscus announces readiness with a postMessage of its own. Tracking it
+      // avoids posting into an iframe that has not navigated to giscus.app
+      // yet, which throws "Unable to post message to https://giscus.app".
+      var frameReady = false;
+      window.addEventListener("message", function (e) {
+        if (e.origin === ORIGIN) frameReady = true;
+      });
+
+      function pushTheme() {
+        if (!frameReady) return;
+        var frame = document.querySelector("iframe.giscus-frame");
+        if (!frame || !frame.contentWindow) return;
+        try {
+          frame.contentWindow.postMessage(
+            { giscus: { setConfig: { theme: currentTheme() } } },
+            ORIGIN
+          );
+        } catch (err) {
+          /* iframe not on the giscus origin yet; the next toggle will retry */
+        }
+      }
+
+      new MutationObserver(pushTheme).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+    })();
+  </script>
+{{- end -}}

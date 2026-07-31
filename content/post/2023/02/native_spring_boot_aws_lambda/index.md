@@ -1,11 +1,9 @@
 +++
-author = "Vladlen Gladis"
 title = "Deep dive into AWS Lambda using Spring Boot 3 and GraalVM"
 date = "2023-02-24"
-description = "Building AWS Lambda with Spring Boot 3 and GraalVM Native Image: A Comprehensive Guide."
-featured = true
-toc = true
+description = "Building a production-ready native AWS Lambda with Spring Boot 3 and GraalVM — the custom runtime explained, SAM deployment, and a GitHub Actions pipeline."
 draft = false
+showTableOfContents = true
 keywords = [
     "AWS Lambda",
     "Spring Boot",
@@ -26,8 +24,6 @@ tags = [
 categories = [
     "Cloud"
 ]
-featureImage = "/images/post1_native_aws_lambda/thumbnail.png"
-thumbnail = "/images/post1_native_aws_lambda/thumbnail.png"
 +++
 
 Serverless computing has become increasingly popular in recent years, and AWS Lambda is one of the most
@@ -47,15 +43,14 @@ By the end of this guide, you'll have a solid understanding of how to build and 
 ## Foreword
 This blog post will guide you through the steps of building a production-ready native AWS Lambda function that receives batch messages from an SQS and writes them into a DynamoDB table. It will explain all the details along the way.
 
-{{% notice info "To DIY you will need" %}}
-* Basic understanding of Spring and Spring Boot
-* Java 17
-* Docker
-* AWS SAM ([Installation guide](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html))
-* GraalVM (for local testing [Tutorial how to install it locally](/tutorial/2023/manage_multiple_jdk/)) *optional* (you may need it to build a native image locally)
-* AWS Account *optional* (you may need it if you want to deploy lambda to AWS)
-* GitHub Repository *optional* (you may need it if you want to automate deployments to AWS using GitHub Actions workflows)
-{{% /notice %}}
+> [!INFO] To DIY you will need
+> * Basic understanding of Spring and Spring Boot
+> * Java 17
+> * Docker
+> * AWS SAM ([Installation guide](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html))
+> * GraalVM (for local testing [Tutorial how to install it locally](/tutorial/2023/manage_multiple_jdk/)) *optional* (you may need it to build a native image locally)
+> * AWS Account *optional* (you may need it if you want to deploy lambda to AWS)
+> * GitHub Repository *optional* (you may need it if you want to automate deployments to AWS using GitHub Actions workflows)
 
 ## What is a Native Image, GraalVM, Spring Boot AOT processing, and How Do They Connect?
 GraalVM is a universal VM developed by Oracle JDK that is designed to accelerate the execution of applications written in Java and other JVM languages, supporting `JVM Runtime Mode`, `Java on Truffle`, and `Native Image`, with the latter being the focus of this blog post.
@@ -63,7 +58,8 @@ GraalVM is a universal VM developed by Oracle JDK that is designed to accelerate
 ### GraalVM
 The GraalVM [native image](https://www.graalvm.org/22.0/reference-manual/native-image/) is a component of GraalVM that ahead-of-time (AOT) compiles Java code into a standalone executable, which can be executed without a JVM. This allows for faster startup times and a lower memory footprint compared to traditional JVM-based applications. Native-Image is particularly useful for serverless and cloud-native applications, where lower startup times and lower memory usage can help reduce resource utilization, improve scalability, and reduce overall costs.
 
-> **Note:** The artifact produced by the GraalVM is platform-dependent, meaning you won't be able to run it on a platform with a different architecture or OS.
+> [!NOTE]
+> The artifact produced by the GraalVM is platform-dependent, meaning you won't be able to run it on a platform with a different architecture or OS.
 
 There are some minor inconveniences of using GraalVM and assembling standalone executables:
 * Longer build time (depending on machine and application size, it can take anywhere from ~2 minutes to ~10 minutes)
@@ -150,9 +146,8 @@ As a result, we can see that we have the exact 3 things we've mentioned before:
 3. A supplier that instantiates `ProcessNoteRequest`: `getProcessNoteRequestInstanceSupplier`.
 
 
-{{% notice info "In a nutshell" %}}
-Spring Ahead-of-Time Processing takes all the components that will be created and instantiated during runtime by Spring's magic and transforms them into plain Java configurations.
-{{% /notice %}}
+> [!INFO] In a nutshell
+> Spring Ahead-of-Time Processing takes all the components that will be created and instantiated during runtime by Spring's magic and transforms them into plain Java configurations.
 
 
 With this understanding, it's clear why Spring Ahead-of-Time Processing is so important for an application built with GraalVM. Without it, all the annotation-based configurations would need to be manually migrated to Java configurations by developers.
@@ -167,42 +162,43 @@ The AWS SAM (Serverless Application Model) is a framework for building serverles
 * **Runtime**: Specifying the runtime in which your code will run (e.g. Java 11, Python, Node.js, custom runtime, etc.).
 * **Deployment**: Handling deployment automatically by SAM, thereby eliminating deployment overhead. You just need to update your code and configuration, and trigger the deployment.
 
->**Note:** SAM offers a nice feature that allows you to emulate the AWS Lambda environment locally for debugging and testing purposes using the `sam local invoke` command.
+> [!NOTE]
+> SAM offers a nice feature that allows you to emulate the AWS Lambda environment locally for debugging and testing purposes using the `sam local invoke` command.
 
 It's worth noting that SAM is based on AWS Lambda and is designed to simplify the process of building and deploying serverless applications. By using SAM, you can save time and reduce complexity, allowing you to focus on developing and refining your application's core features.
 
-{{% notice info "In a nutshell" %}}
-SAM is composed of two components. The first is a Command Line Interface (CLI) that allows you to build, create, deploy, and delete Serverless applications on AWS. The second component is a YAML template that defines all the configurations your application consists of.
-
-For example, in the template below, an AWS function is declared that is triggered by an SQS event:
-```yaml
-AWSTemplateFormatVersion: "2010-09-09"
-Transform: AWS::Serverless-2016-10-31
-Description: >
-  sam-app
-
-Globals:
-  Function:
-    Timeout: 20
-    Runtime: java11
-    MemorySize: 256
-    Architectures:
-      - x86_64
-
-Resources:
-  MyFunction:
-    Type: AWS::Serverless::Function
-
-    Properties:
-      CodeUri: .
-      Handler: com.gvart.AppHandler.java
-      Events:
-        SQSEvent:
-          Type: SQS
-          Properties:
-            Queue: my.queue.arn
-```
-{{% /notice %}}
+> [!INFO]+ In a nutshell
+> SAM is composed of two components. The first is a Command Line Interface (CLI) that allows you to build, create, deploy, and delete Serverless applications on AWS. The second component is a YAML template that defines all the configurations your application consists of.
+>
+> For example, in the template below, an AWS function is declared that is triggered by an SQS event:
+>
+> ```yaml
+> AWSTemplateFormatVersion: "2010-09-09"
+> Transform: AWS::Serverless-2016-10-31
+> Description: >
+>   sam-app
+>
+> Globals:
+>   Function:
+>     Timeout: 20
+>     Runtime: java11
+>     MemorySize: 256
+>     Architectures:
+>       - x86_64
+>
+> Resources:
+>   MyFunction:
+>     Type: AWS::Serverless::Function
+>
+>     Properties:
+>       CodeUri: .
+>       Handler: com.gvart.AppHandler.java
+>       Events:
+>         SQSEvent:
+>           Type: SQS
+>           Properties:
+>             Queue: my.queue.arn
+> ```
 
 ### Custom runtime explained
 AWS Lambda currently supports seven different runtimes, which are:
@@ -214,7 +210,8 @@ AWS Lambda currently supports seven different runtimes, which are:
 6. Ruby
 7. Custom Runtime
 
-> **Note:** The Custom Runtime allows you to implement an AWS Lambda runtime in any programming language by following a simple specification.
+> [!NOTE]
+> The Custom Runtime allows you to implement an AWS Lambda runtime in any programming language by following a simple specification.
 
 The GraalVM native-image produces a binary executable file that is not supported by default runtimes. However, it is possible to run it using custom runtime. The custom runtime is already implemented as part of [spring-cloud-function-adapter-aws](https://github.com/spring-cloud/spring-cloud-function/tree/main/spring-cloud-function-adapters/spring-cloud-function-adapter-aws), but understanding how it works can be helpful. Therefore, we will explore it further.
 
@@ -232,7 +229,8 @@ To create a custom runtime, you simply need to adhere to a straightforward speci
     ```
 
 **To visualize the flow, we can use this flow diagram (see explanation below)**
-![AWS Custom runtime Flow Diagram::polaroid](/images/post1_native_aws_lambda/flow_diagram_custom_runtime.png)
+
+![AWS Custom runtime flow diagram](flow_diagram_custom_runtime.png "AWS custom runtime — invocation flow")
 
 2. When the application starts up, it needs to perform several initialization steps to ensure it is ready to handle incoming requests efficiently:
    1. Load its configuration from environment variables: `_HANDLER`, `LAMBDA_TASK_ROOT`, `AWS_LAMBDA_RUNTIME_API`. *More information on how to do this can be found in the [documentation](https://docs.aws.amazon.com/lambda/latest/dg/runtimes-custom.html#runtimes-custom-build:~:text=Initialization%20tasks-,Retrieve%20settings,-%E2%80%93%20Read%20environment%20variables).*
@@ -250,7 +248,9 @@ To create a custom runtime, you simply need to adhere to a straightforward speci
 > To find the complete code check out [GitHub repository](https://github.com/gvart/every-note-persister), in this section we will cover only the main parts.
 
 For this implementation, we will focus on a common use case where AWS Lambda is triggered by a message from Amazon Simple Queue Service (SQS), performs some business logic on the message, and then persists the modified message in Amazon DynamoDB.
-![Project HLD::polaroid](/images/post1_native_aws_lambda/aws_lambda_hld.png)
+
+![Project high-level design](aws_lambda_hld.png "project high-level design — SQS to Lambda to DynamoDB")
+
 ### Writing the code
 To prepare the runtime for the AWS Lambda, we will need to add the following plugins to the project:
 ```kotlin
@@ -470,7 +470,9 @@ build-EveryNotePersisterFunction:
 The final step is to create a build environment for the Lambda function. 
 Since the build artifact will run in the Amazon Linux 2 operating system, we need to ensure that the artifact can be built and executed on `provided.al2`. 
 To do so, all build steps will happen inside a Docker container with the base image  `public.ecr.aws/amazonlinux/amazonlinux:2`
-> **Note:**  This file was generated by the SAM CLI and has been modified to make it easier to manage versions by exposing the GraalVM, Java, and Gradle versions as arguments.
+> [!NOTE]
+> This file was generated by the SAM CLI and has been modified to make it easier to manage versions by exposing the GraalVM, Java, and Gradle versions as arguments.
+
 ```Dockerfile
 FROM public.ecr.aws/amazonlinux/amazonlinux:2
 
@@ -517,7 +519,7 @@ ENTRYPOINT ["sh"]
 ```
 
 ### Deploying the Lambda function
-> **Note:** Before proceeding with deployment, make sure that:
+> [!NOTE] Before proceeding with deployment, make sure that:
 > 1. Docker has at least 4GB RAM.
 > 2. AWS credentials are properly configured on your local environment.
 > 3. You have sufficient permissions to create such resources as CloudFormation, S3, SQS, Lambda, and DynamoDB.
@@ -649,18 +651,24 @@ To test created lambda function, I found several options that can be applied sep
     --queue-url=https://sqs.eu-west-1.amazonaws.com/<ACCOUNT-ID>/<QUEUE-NAME> \
     --message-body='{"body":"my message"}'
     ```
-    > **Note:** Don't forget to replace `<ACCOUNT-ID>` and `<QUEUE-NAME>` placeholders with values that correspond to your account and created queue name.
+    > [!NOTE]
+    > Don't forget to replace `<ACCOUNT-ID>` and `<QUEUE-NAME>` placeholders with values that correspond to your account and created queue name.
 
     After that, we should check the Lambda's monitor tab to ensure that the lambda was executed successfully.
-    ![Lambda Monitor screen::polaroid](/images/post1_native_aws_lambda/cloud_watch_monitor.png)
+
+    ![Lambda monitor screen](cloud_watch_monitor.png "CloudWatch metrics for the deployed function")
+
     We should also check that there is an entry in DynamoDB with the posted message.
-    ![Dynamodb items::polaroid](/images/post1_native_aws_lambda/dynamodb_item.png)
+
+    ![DynamoDB items](dynamodb_item.png "the persisted message in DynamoDB")
+
     
     *I would recommend using this approach when we want to perform end-to-end (E2E) tests in a pre-production account or to perform load/performance tests within a real AWS environment, all these steps can be automated and also introduced as part of CI/CD.*
 
 ## It's time for automation (GitHub CI/CD workflows)
 We all like to be lazy and delegate our work to someone else, so let's delegate the building, testing, and deployment to a GitHub workflow.
->**Note:** The workflows described below are pretty simple and can be adjusted based on your requirements.
+> [!NOTE]
+> The workflows described below are pretty simple and can be adjusted based on your requirements.
 
 I've created two workflows.
 The first one is triggered when a pull request is opened, and GitHub Actions will try to build our application, run tests, and finally build a native executable using SAM:
@@ -717,7 +725,7 @@ jobs:
       - run: sam build --use-container
 ```
 The second workflow gets triggered when a merge occurs on the **main** branch. It will assume an IAM role, build the native-image (this step can be improved by caching the artifact from the previous step to reduce execution time), and finally deploy our serverless application.
-> **Note:** Before running this workflow, please ensure that you have completed the following steps:
+> [!NOTE] Before running this workflow, please ensure that you have completed the following steps:
 > 1. Create Secrets for GitHub Actions with `AWS_REGION` and `AWS_ROLE` which have sufficient permissions to create all resources defined in` template.yml`.
 > 2. [Configure the OIDC provider](https://github.com/aws-actions/configure-aws-credentials#assuming-a-role) to allow GitHub to assume the IAM role without any AWS credentials. Alternatively, you can use `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
 > 3. Verify that the role/user you are using for deployment has sufficient permissions. For testing purposes, you can use AdministratorAccess, but it's better to configure a fine-grained IAM policy. You can find more details on how to do this here: https://sst.dev/chapters/customize-the-serverless-iam-policy.html

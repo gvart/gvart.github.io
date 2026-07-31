@@ -17,3 +17,8 @@ hugo.linux
 
 # IDE
 .idea/
+# Playwright MCP artifacts
+/.playwright-mcp/
+
+# macOS
+.DS_Store

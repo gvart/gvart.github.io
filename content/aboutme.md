@@ -1,24 +1,25 @@
 +++
 title = "About"
-description = "About Vladlen Gladis"
+description = "Vladlen Gladis — software engineer working on the JVM, the Spring ecosystem and distributed systems on AWS."
 date = "2023-02-04"
 aliases = ["about-gvart", "contact"]
-author = "Vladlen Gladis"
 +++
 
-Hi, my name is **Vladlen Gladis** and I'm originally from a [small town](https://en.wikipedia.org/wiki/Str%C4%83%C8%99eni) in Moldova, I've been working as a software engineer since 2016.
-![:right::about-image round](/images/about_photo.png)
+![Vladlen Gladis](images/about_photo.png)
+{class="dwg-portrait"}
 
-### My experience
-One of my passions is mentoring and supporting other developers around me, and I believe that this is an
-important part of being a successful software engineer. To further my knowledge and skills, I've
-obtained several certifications, including an AWS Developer Certification, AWS Associate
-Solution Architect Certification, and a Java Professional Certification.
+I'm **Vladlen Gladis**, a software engineer since 2016, originally from a [small town](https://en.wikipedia.org/wiki/Str%C4%83%C8%99eni) in Moldova.
 
-### I'm interested in
-I have a particular interest in **Java/Kotlin**, **Spring Ecosystem**, **Cloud architecture**, and I love teaching and reading about these technologies.
-I've built a number of distributed and reliable solutions on AWS, and I find that dealing with complex software architectures is one of my favorite challenges.
+### What I work on
 
-### New steps
-I am now making my mark in the tech world by starting to write my own blog posts. I hope that by sharing my experiences and expertise, I can help others who are just starting out in the field, or who are looking to improve their skills.
-Thank you for taking the time to read a little bit about me! :v:
+**Java and Kotlin**, the **Spring ecosystem**, and **cloud architecture on AWS**. I've built a number of distributed, reliable systems there, and untangling a complicated architecture is still my favourite kind of problem.
+
+Along the way I've picked up the AWS Developer and AWS Solutions Architect Associate certifications, and a Java Professional certification.
+
+### Why this blog exists
+
+Mentoring is the part of the job I enjoy most, and writing is mentoring at a distance. These posts are the notes I wish had existed when I was working something out: how GraalVM turns a Spring Boot application into a native binary, why a JDK manager saves you an afternoon, what actually happens between a socket and an HTTP response.
+
+They're deliberately long. The interesting parts of the JVM don't fit in a tweet.
+
+Thanks for reading. :v:

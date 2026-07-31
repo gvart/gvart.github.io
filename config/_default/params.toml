@@ -1,155 +1,155 @@
-# enable search
+# -- Theme parameters --
+# Full rewrite: every Clarity param was theme-specific and is inert here.
+
+# -- Appearance --
+# The Drawing Set scheme lives at assets/css/schemes/drawing-set.css.
+# head.html resolves it with `lower`, so the filename must be lowercase.
+colorScheme = "drawing-set"
+
+# Dark-first: the drafting ground IS the identity, so it must not be
+# overridden by the reader's OS setting. The switcher stays enabled as a
+# legibility escape hatch (and because appearance.js reads a stale
+# localStorage "appearance" value BEFORE checking data-auto-appearance, so a
+# prior visit could otherwise drop a reader into an undesigned light mode).
+defaultAppearance = "dark"
+autoSwitchAppearance = false
+
 enableSearch = true
+enableCodeCopy = true
+enableStructuredBreadcrumbs = true
+enableStyledScrollbar = true
 
-# socials
-twitter = "@VladlenGladis"
-largeTwitterCard = true # set to true if you want to show a large twitter card image. The default is a small twitter card image
-introDescription = "Software Developer, AWS Solution Architect, Clean code lover"
-introURL = "aboutme/" # set the url for the 'read more' button below the introDescription, or set to false to not show the button
-#description = "here is description" # Set your site's meta tag (SEO) description here. Alternatively set this description in your home page content file e.g. content/_index.md. Whatever is set in the latter will take precedence.
-keywords = ["software design", "java", "spring boot", "aws", "blog", "reactive-programming"] # Set your site's meta tag (SEO) keywords here. Alternatively set these in your home page content file e.g. content/_index.md. Whatever is set in the latter will take precedence.
+# The a11y panel injects an iOS-style toggle widget that is off-idiom; the
+# design meets WCAG AA on its own.
+enableA11y = false
 
-# showShare = false # Uncomment to not show share buttons on each post. Also available in each post's front matter.
+replyByEmail = false
 
-# Google analytics Id
-ga_analytics = ""
+mainSections = ["post", "tutorial"]
 
-# Google tag manager
-google_tag_manager_id = "G-JECGWJF0WM"
+# Feeds the home-page JSON-LD in schema.html, and acts as the
+# <meta name="keywords"> fallback for pages with no tags.
+keywords = ["software design", "java", "kotlin", "spring boot", "graalvm", "aws", "serverless"]
 
-# Baidu analytics Id
-# baidu_analytics = "XXXXXXXX"
+disableImageOptimization = false
+disableImageOptimizationMD = false
+disableTextInHeader = false
+hotlinkFeatureImage = false
+fingerprintAlgorithm = "sha512"
 
-# limit the number of taxonomies links shown on the sidebar of each page by default.
-numberOfTagsShown = 14 # Applies for all other default & custom taxonomies. e.g categories, brands see https://gohugo.io/content-management/taxonomies#what-is-a-taxonomy
+# NOTE: `defaultSocialImage` is intentionally unset. Clarity's equivalent
+# (fallBackOgImage) pointed at a file that never existed, which is the bug
+# this migration fixes -- so it is left unset rather than pointed at the
+# 	logo. Per-post social images come from each bundle's featured.* resource.
 
-# Whether to default to storing images and other assets in the `static` directory, or use Hugo page bundles.
-# Switch to `true` if you'd like to group assets with the post itself (as a "leaf bundle").
-# This can be overridden at the page level; what is set below acts as the default if no page variable is set.
-# Details on page bundles: https://gohugo.io/content-management/page-bundles/#leaf-bundles
-usePageBundles = false
+# X/Twitter handle. Consumed by Hugo's _internal/twitter_cards.html, which
+# requires site.Params.social to be a MAP (it calls reflect.IsMap on it).
+# Clarity's flat `twitter = "@..."` param would NOT work.
+[social]
+  twitter = "@VladlenGladis"
 
-# Path variables
-#
-# By default, each of these directories are children of the `static` directory.
-#
-# In some Apache server installs, these directory names could conflict and you
-# may want to change them. See:
-# https://github.com/chipzoller/hugo-clarity/issues/74
-#
-# If you change the names of these directories, be sure to copy the contents of
-# the originals to get the files included with Hugo Clarity.
-#
-# Images:
-imagesDir = "images/" # without a leading forward slash
-# Icons:
-iconsDir = "icons/" # without a leading forward slash
-# Fonts:
-fontsDir = "fonts/" # without a leading forward slash
+[header]
+  # `basic` is the only non-fixed layout. The fixed variants assume a
+  # lg:top-[140px] TOC offset and .anchor{top:-150px}; the drawing set puts
+  # the title block on the sheet rather than floating over it.
+  layout = "basic"
 
-# Social media sharing image: Will be used on Twitter, Facebook, LinkedIn, etc.
-# when a given page has no other image present.
-fallBackOgImage = "images/thumbnail.png"
+[footer]
+  showMenu = true
+  showCopyright = true
+  showThemeAttribution = true
+  showAppearanceSwitcher = true
+  showScrollToTop = true
 
-# Logo image
-logo = "logos/logo.png"
+[homepage]
+  # `custom` is Blowfish's officially reserved user hook: layouts/index.html
+  # dispatches to partials/home/<layout>.html and the theme ships no
+  # home/custom.html. No index.html override is needed.
+  layout = "custom"
 
-# center logo on navbar
-centerLogo = false # Set to "true" for centering or "false" for left aligned.
+  # Consumed by layouts/partials/home/custom.html.
+  displayLine = "Deep dives on the JVM"
+  tagline = "notes from the runtime — native images, cold starts, and the parts of Spring nobody documents"
+  sheetRef = "sheet 01 / index"
+  indexLabel = "recent"
+  showMoreLabel = "all posts"
+  showRecentItems = 10
+  showMoreLinkDest = "/post/"
 
-# sets the maximum number of lines per codeblock. The codeblock will however be scrollable and expandable.
-codeMaxLines = 25
+[article]
+  showDate = true
+  showDateUpdated = false
+  showAuthor = false            # single-author site; a byline on every sheet is noise
+  showAuthorBottom = false
+  showHero = false              # no photographic hero in a drawing set
+  showBreadcrumbs = true        # a drawing set is navigated by reference
+  showDraftLabel = true
+  showEdit = false
+  showHeadingAnchors = true
+  showPagination = true
+  showReadingTime = true
+  showWordCount = false         # would add a 4th field to the metadata line
+  showTableOfContents = true    # 7 h2s across 789 lines
+  showRelatedContent = true
+  relatedContentLimit = 2
+  showTaxonomies = true         # required to surface categories/tags at all
+  showCategories = true
+  showTags = true               # tag chips on the card, below the metadata line
+  showZenMode = false           # the design IS the reading mode
+  seriesOpened = false
+  externalLinkForceNewTab = true
 
-# disable showing line numbers by default. Switch to `true` if you'd rather have them on.
-codeLineNumbers = true
+  # REQUIRED for layouts/partials/comments.html to render at all. Absent from
+  # Blowfish's own default AND example params.toml, and defaults to false --
+  # single.html emits a warnf and renders nothing without it.
+  showComments = true
 
-# enable math notation. Switch to `true` to enable mathjax in your site.
-enableMathNotation = false
+  sharingLinks = ["linkedin", "bluesky", "email"]
 
-# directory(s) where your articles are located
-mainSections = ["post", "tutorial"] # see config details here https://gohugo.io/functions/where/#mainsections
+[list]
+  showHero = false
+  showBreadcrumbs = true
+  showSummary = true            # summary paragraph under the tag chips
+  showTableOfContents = false
+  showCards = true              # thumbnail + bordered card, restyled as a plate
+  cardView = false              # `true` routes to the image-top grid instead
+  constrainItemsWidth = false   # cards need the full measure for the thumbnail
+  groupByYear = false           # with 3 posts, year headings outweigh the entries
+  orderByWeight = false
 
-# Label Non inline images on an article body
-figurePositionShow = false # toggle on or off globally
-# you can toggle this behaviour on or off on per page using the same variable inside your articles frontmatter
-figurePositionLabel = "Figure" # the text before image number e.g Figure 1.0
+[sitemap]
+  excludedKinds = ["taxonomy", "term"]
 
-# Set the collapsed mobile navigation to either appear from the left or the right
-mobileNavigation = "left" # if you prefer right change to 'right'
+[taxonomy]
+  showTermCount = true
+  showHero = false
+  showBreadcrumbs = true
+  showTableOfContents = false
+  cardView = false
 
-# some site owners want to decide how they would like their sites to be introduced users. These settings give you as a site owner to decide how the user will view your site for the first time.
+[term]
+  showHero = false
+  showBreadcrumbs = true
+  showTableOfContents = false
+  groupByYear = false
+  cardView = false
+  cardViewScreenWidth = false
 
-# please note that you cannot enforce both modes at the same time. i.e by enforcing one mode, you priotise it over the other (by setting it to true). enforceDarkMode will be commented out
-
-# please also not that mode toggle UI will remain in place. That way, if a user prefers darkmode, they can have their way.
-
-enforceLightMode = false
-# enforceDarkMode = false
-
-# customize footer icon. see issue https://github.com/chipzoller/hugo-clarity/issues/77
-footerLogo = "icons/favicon-32x32.png"
-
-# Customize Sidebar Disclaimer Text
-# sidebardisclaimer = true
-# disclaimerText = "The opinions expressed on this site are my own personal opinions and do not represent my employer’s view in any way."
-
-# Text for the languages menu.
-languageMenuName = "🌐"
-
-# Title separator, default to |.
-# titleSeparator = "|"
-
-# Enable or disable comments globally. Default to true.
-comments = true
-
-# Giscus comments (GitHub Discussions-based)
-giscus = true
-giscusRepo = "gvart/gvart.github.io"
-giscusRepoId = "R_kgDOI50yCQ"
-giscusCategory = "General"
-giscusCategoryId = "DIC_kwDOI50yCc4C6jjW"
-giscusMapping = "pathname"
-giscusReactionsEnabled = "1"
-giscusTheme = "preferred_color_scheme"
-giscusLang = "en"
-
-# Maximum number of recent posts. (default: 8)
-# numberOfRecentPosts = 8
-
-# Maximum number of featured posts. (default: 8)
-# numberOfFeaturedPosts = 8
-
-# Pin featured posts in list.
-# pinFeatured = true
-
-# Maximum number of pinned featured posts. (default: 8)
-# numberOfPinnedPosts = 8
-
-# Date format. Checkout https://gohugo.io/functions/format/#hugo-date-and-time-templating-reference for details.
-# dateFormat = "2006-01-02" # Default to "Jan 2, 2006".
-# customFonts = false # toggle to true if you want to use custom fonts only.
-
-# The year when ths website was created, this value is used in the copyright
-# notice of the footer.
-since = 2023
-
-# Show related content at the end of an article based on the 'series' taxonomy. Can be set in post front matter.
-showRelatedInArticle = true
-showRelatedInSidebar = true
-
-# website author
-[author]
-name = "Vladlen Gladis"
-# photo = "images/jane-doe.png" #include this if you would like to show the author photo on the sidebar
-
-[plausible_analytics]
-enable = false # to enable plausible analytics set to true.
-websiteDomain = "gvart.github.io" # domain name of your website, most cases same as your base url
-# plausibleDomain = "plausible.io" # default is set to plausible.io, only required if plausible is selfhosted
-# scritpName = "plausible" # default is set to plausible, only required if using a custome name for script
-
-[matomo_analytics]
-enable = false # To enable matomo analytics change to `true`.
-websiteDomain = "gvart.github.io" # Set the domain name of your website, in most cases same as your base URL this is required.
-matomoDomain = "matomo.example.com" # Set to Matomo domain
-matomoSiteID = "1" # Default is set to 1, change this to the siteid being tracked
+# -- Comments (giscus) --
+# Consumed by the project's layouts/partials/comments.html. Blowfish has no
+# built-in giscus support.
+# mapping = "pathname" MUST NOT change: existing GitHub Discussions threads
+# are keyed on the URL path.
+[giscus]
+  repo = "gvart/gvart.github.io"
+  repoId = "R_kgDOI50yCQ"
+  category = "General"
+  categoryId = "DIC_kwDOI50yCc4C6jjW"
+  mapping = "pathname"
+  strict = "0"
+  reactionsEnabled = "1"
+  emitMetadata = "0"
+  inputPosition = "bottom"
+  lang = "en"
+  lightTheme = "light"
+  darkTheme = "dark"

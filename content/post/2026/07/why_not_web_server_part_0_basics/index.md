@@ -1,26 +1,35 @@
 +++
-author = "Vladlen Gladis"
 title = "[Part 0]. Build your own web-server using Java and a bit of curiosity - Foundation"
 date = "2026-07-21"
 description = "My journey of building a web-server from scratch using Java 25."
-featured = true
-toc = true
-draft = false
+
+# Kept as a draft: this post was never deployed (it lived only on the
+# why-not-webserver-part-0 branch) and still carried literal "TODO"
+# placeholders. Flip to false to publish.
+draft = true
+
+showTableOfContents = true
+
+# Series name must be a SINGLE WORD. Blowfish's series_base.html looks the
+# term up with strings.ToLower, while Hugo keys the taxonomy by the *urlized*
+# term -- so "Why Not A Webserver" would silently list zero parts.
+series = ["Webserver"]
+series_order = 0
+
 keywords = [
     "Java",
     "IO",
-    "TODO"
+    "sockets",
+    "web server"
 ]
 tags = [
     "java",
-    "dyi",
-    "dyi-webserver",
+    "diy",
+    "diy-webserver",
 ]
 categories = [
     "Java"
 ]
-featureImage = "TODO"
-thumbnail = "TODO"
 +++
 You may wonder why another web server, when there's already [Jetty](https://github.com/jetty/jetty.project), [Tomcat](https://github.com/apache/tomcat), [Netty](https://github.com/netty/netty) etc. 
 My answer is [why not](https://github.com/gvart/why-not-webserver)? I'm genuinely bored with the current state of AI engineering, where the only thing you have to do is write another prompt 
@@ -30,9 +39,8 @@ To entertain myself I decided to build a web-server capable of handling traffic 
 My final goal is not building a production-grade web-server - my goal is to learn things from A to Z, understand how things work at different levels of abstraction and definitely have some fun!
 
 
->**Don't perceive this as a holy grail of web-server building.**
-> 
-> This series of blog posts is more of private notes I've taken along the way to understand different topics and better memorize them. I thought other software enthusiasts might be interested in this, that's why 
+> [!IMPORTANT] Don't perceive this as a holy grail of web-server building
+> This series of blog posts is more of private notes I've taken along the way to understand different topics and better memorize them. I thought other software enthusiasts might be interested in this, that's why
 > I decided to share it on my personal blog.
 
 ## Why learn the basics?
@@ -54,13 +62,14 @@ If your curiosity is the characteristic that motivated you to do your day-to-day
 
 ## Back to the roots - OSI Levels and how the connection works
 The Open Systems Interconnection (OSI) model defines how computers communicate to each other across networks. To simplify how data is transmitted from computer A to computer B, it is split in 7 canonical layers:
-![OSI Levels::polaroid](/images/2026/why_not_web_sever/part0/osi_model_7_layers.png)
+
+![The seven OSI layers](osi_model_7_layers.png "the seven layers of the OSI model")
 
 I think it's always easier to understand a complex implementation by giving real-world examples, explaining the concepts and defining what is happening at each OSI level.
 Let's imagine that you've built a REST API which allows end customers to manage their TODO list. The user is trying to create a new TODO item by invoking your creation endpoint (i.e. `POST: /api/v1/todo`) with 
 a payload `{"content": "Buy food for my cat", "dueDate": "12-12-2027"}`, and here are the steps that would happen based on the OSI standard.
 
-#### 7.Application layer
+### 7. Application layer
 This layer is responsible for defining the standards of different top-level protocols like FTP (for file transferring), SMTP (for emailing), HTTP, etc. HTTP is the one which is being used
 by our API. So the application code will use HTTP to process the message, at its core HTTP is a simple text-based protocol (true for version 1.1 while HTTP/2 is a binary protocol)
 
@@ -78,7 +87,7 @@ Content-Length: 59
 That's **214 bytes** of plain text (155 bytes of headers + the empty line, and 59 bytes of body - the same 59 you see in `Content-Length`).
 Keep this number in mind, every layer below will wrap it into something bigger.
 
-#### 6.Presentation layer
+### 6. Presentation layer
 This layer's mission is to translate the request to a format which can be understood by the layer below, it can do things like translation (serialization), compression (gzip), encryption (TLS). 
 This is still happening on the client device and is handled by the application code.
 
@@ -93,7 +102,7 @@ And what leaves the process after Jackson serializes it:
 If the endpoint was served over HTTPS, this is also where TLS would encrypt those 214 bytes, and everything below would only see
 random-looking bytes instead of the nice text above.
 
-#### 5.Session Layer
+### 5. Session Layer
 The session layer makes sure that the connection between the client and server is established and stays open until data is processed by the server (be it by returning a 
 response with payload, simple status code) or until an error occurs.
 
@@ -103,10 +112,11 @@ Connection: keep-alive
 ```
 Thanks to that, the same TCP connection is reused for the next request (i.e. a `GET /api/v1/todo` to list the TODOs right after creating one),
 so you don't pay for a new handshake every time.
-{{% notice note "About layer 5 and 6" %}}
-   These layers don't really exist and nowadays, in the TCP/IP stack these are part of the application layer and handled by libraries (TLS, gzip, JSON serialization). 
-{{% /notice %}}
-#### 4.Transport layer
+
+> [!NOTE] About layers 5 and 6
+> These layers don't really exist any more: in the TCP/IP stack they are part of the application layer, handled by libraries (TLS, gzip, JSON serialization).
+
+### 4. Transport layer
 This is where low-level protocols are TCP and UDP (in our case HTTP 1.1/2 is built on top of TCP and HTTP 3 is over UDP), so here the client payload is divided in segments (or datagrams for UDP) and sent to the server (and back), on the server 
 side these segments are received and reassembled into data. An additional nice feature of this layer is **ports**, with which you're familiar if you ever bootstrapped a web-app.
 
@@ -121,7 +131,7 @@ Payload:          214 bytes    <- the whole HTTP request from layer 7
 Our request is small enough to fit in a **single** segment (a typical Ethernet link allows ~1460 bytes of TCP payload), so there's nothing to split here.
 Upload a 5MB picture instead and the same payload would be chopped into thousands of segments, which TCP then has to number, retransmit when lost, and reassemble in order on the other side.
 
-#### 3.Network layer
+### 3. Network layer
 This layer is where IP lives, and its main responsibility is to route the data from computer A to computer B, within a chain of networks.
 
 The segment above is now wrapped into an IP packet:
@@ -135,7 +145,7 @@ Total length:     254 bytes      <- 20 bytes IP header + 234 bytes TCP segment
 ```
 Note that nothing here knows about HTTP, ports or your TODO item, a router only looks at the destination IP and decides where to forward the packet next.
 
-#### 2.Data Link layer:
+### 2. Data Link layer:
 This layer is responsible to transmit data between two physically connected nodes by using MAC addresses (physical address of the device). The data chunks are called frames.
 
 The packet is wrapped one last time, into an Ethernet frame:
@@ -150,7 +160,7 @@ This is the detail that surprises most people: the destination MAC is **not** th
 MAC addresses only make sense within one physical link, so every hop between you and `api.example.com` strips the frame,
 looks at the IP packet inside, and builds a brand new frame with the MACs of the next hop.
 
-#### 1.Physical layer:
+### 1. Physical layer:
 This is the last layer that transmits the data as bits (1 and 0) via wire, fiber or radio. 
 
 Our 272 byte frame finally becomes **2176 bits** (272 * 8) which is transmitted via wire, fiber or a radio signal over Wi-Fi.

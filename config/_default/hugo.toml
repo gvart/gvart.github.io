@@ -1,27 +1,82 @@
-# set `baseurl` to your root domain
-# if you set it to "/" share icons won't work properly on production
-baseurl = "https://gvart.dev/"  # Include trailing slash
-# title = "Clarity"  # Edit directly from config/_default/languages.toml # alternatively, uncomment this and remove `title` entry from the aforemention file.
-copyright = "GVART Blog"
-# canonifyurls = true
-theme = ["github.com/chipzoller/hugo-clarity"]
-# disqusShortname = "gvart-github-io"
+# -- Site configuration --
+# The theme is declared as a module import in config/_default/module.toml.
+# Do NOT add a `theme` key here; the two mechanisms conflict.
 
-DefaultContentLanguage = "en"
-# [languages]
-# config/_default/languages.toml
+baseURL = "https://gvart.dev/"
+defaultContentLanguage = "en"
 
-# [menus]
-# config/_default/menus/menu.xx.toml
-enableEmoji = true
+enableEmoji = true          # content uses :v: in aboutme.md
+enableRobotsTXT = true
+
+buildDrafts = false
+buildFuture = false
+
+# Auto-summary length, in words. Blowfish's default of 0 yields blank snippets
+# in the search overlay, which reads as a broken index. This does not affect
+# meta descriptions: head.html builds those from .Params.summary, not .Summary.
+summaryLength = 30
+
+# Was dead config in configTaxo.toml (Hugo nests config by *basename*, so
+# nothing in that file ever applied). resources.GetRemote is on the hot path
+# for remote images, and cold CI runners are slow.
+timeout = "60s"
+
+# GA4 measurement ID. Blowfish does not use Hugo's internal GA template, but
+# this root key populates site.Config.Services.GoogleAnalytics.ID, which its
+# own partials/analytics/ga.html reads. Gated behind hugo.IsProduction, so it
+# only emits with HUGO_ENVIRONMENT=production.
+googleAnalytics = "G-JECGWJF0WM"
 
 [pagination]
-pagerSize = 10
+  pagerSize = 10
 
+[imaging]
+  anchor = "Center"
+
+# `authors` is deliberately omitted: this is a single-author site, and
+# declaring it would publish empty /authors/ pages.
 [taxonomies]
-category = "categories"
-tag = "tags"
-series = "series"
+  category = "categories"
+  tag = "tags"
+  series = "series"
 
+[sitemap]
+  changefreq = "weekly"
+  filename = "sitemap.xml"
+  priority = 0.5
+
+# JSON is required by Blowfish's search index (/index.json).
 [outputs]
-home = ["HTML", "RSS", "JSON"]
+  home = ["HTML", "RSS", "JSON"]
+
+[related]
+  threshold = 0
+  toLower = false
+
+  [[related.indices]]
+    name = "tags"
+    weight = 100
+
+  [[related.indices]]
+    name = "categories"
+    weight = 100
+
+  [[related.indices]]
+    name = "series"
+    weight = 50
+
+  [[related.indices]]
+    name = "date"
+    weight = 10
+
+  [[related.indices]]
+    applyFilter = false
+    name = "fragmentrefs"
+    type = "fragments"
+    weight = 10
+
+# Only youtube is kept; the vimeo/x/instagram blocks in the old configTaxo.toml
+# were all no-ops (disabled = false) and inert besides.
+[privacy]
+  [privacy.youtube]
+    privacyEnhanced = true

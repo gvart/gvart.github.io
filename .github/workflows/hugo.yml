@@ -30,6 +30,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      # Blowfish declares [module.hugoVersion] min = 0.158.0, max = 0.164.0.
+      # Bumping past the ceiling will hard-fail the build, not warn.
       HUGO_VERSION: 0.160.1
     steps:
       - name: Install Hugo CLI
@@ -38,8 +40,15 @@ jobs:
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
       - name: Checkout
         uses: actions/checkout@v4
+      # The theme is a Hugo module, so Hugo delegates the download to the `go`
+      # binary. ubuntu-latest happens to ship a usable Go, but that is an
+      # unpinned property of the runner image -- pin it, and get module caching
+      # keyed on go.sum for free.
+      - name: Setup Go
+        uses: actions/setup-go@v5
         with:
-          submodules: recursive
+          go-version: '1.23'
+          cache-dependency-path: go.sum
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5

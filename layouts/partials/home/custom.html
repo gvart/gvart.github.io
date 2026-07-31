@@ -1,0 +1,58 @@
+{{- /* ==========================================================================
+   Drawing Set — home sheet.
+   Reached via homepage.layout = "custom" through layouts/index.html, which
+   dispatches to partials/home/<layout>.html. Blowfish ships no
+   home/custom.html, so this is the officially reserved user hook and no
+   index.html override is needed.
+
+   Uses ONLY bespoke dwg-* classes. Blowfish ships PRE-COMPILED Tailwind v4
+   (assets/css/compiled/main.css); module consumers never run Tailwind, so any
+   utility the theme's own templates don't already use does not exist in the
+   bundle and would be silently inert.
+
+   Reuses article-link/simple.html so the list-spine CSS is shared with the
+   section, taxonomy and term pages. Deliberately avoids .Paginate, which
+   home/page.html's recent-articles path sets up for no reason here.
+   ========================================================================== */ -}}
+
+{{- $hp := site.Params.homepage -}}
+{{- $count := $hp.showRecentItems | default 10 -}}
+{{- $pages := where site.RegularPages "Type" "in" site.Params.mainSections -}}
+
+<section class="dwg-hero">
+  <p class="dwg-hero__eyebrow">
+    {{- with site.Params.author.name }}<span>{{ . }}</span>{{ end }}
+    {{- with $hp.sheetRef }}<span class="dwg-hero__ref">{{ . }}</span>{{ end -}}
+  </p>
+
+  {{- /* Stored in natural case and uppercased in CSS, so screen readers and
+         the document outline are not shouted at. */ -}}
+  <h1 class="dwg-display">{{ $hp.displayLine | default site.Title | emojify }}</h1>
+
+  {{- with $hp.tagline }}
+    <p class="dwg-hero__tagline">{{ . | markdownify }}</p>
+  {{- end }}
+
+  {{- with .Content }}
+    <div class="dwg-hero__lede prose dark:prose-invert">{{ . }}</div>
+  {{- end }}
+</section>
+
+<section class="dwg-index" aria-labelledby="dwg-index-label">
+  <h2 id="dwg-index-label" class="dwg-section-label">{{ $hp.indexLabel | default "index" }}</h2>
+
+  <div class="dwg-index__items">
+    {{- range first $count $pages }}
+      {{ partial "article-link/simple.html" . }}
+    {{- end }}
+  </div>
+
+  {{- /* Always rendered: gating it on `gt (len $pages) $count` meant a site
+         with fewer than showRecentItems posts had no path to the archive at
+         all beyond the header nav. */ -}}
+  <p class="dwg-index__more">
+    <a href="{{ ($hp.showMoreLinkDest | default "/post/") | relLangURL }}">
+      {{ $hp.showMoreLabel | default "all posts" }} <span aria-hidden="true">&rarr;</span>
+    </a>
+  </p>
+</section>

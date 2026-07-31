@@ -1,0 +1,5 @@
+# Blowfish is consumed as a Hugo module.
+# Do NOT also set `theme` in hugo.toml -- the two mechanisms conflict.
+[[imports]]
+  disable = false
+  path = "github.com/nunocoracao/blowfish/v2"

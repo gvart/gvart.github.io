@@ -1,0 +1,19 @@
+{{- /* Drawing Set — code block render hook.
+   Derived from Blowfish v2.105.0. Sole change: expose the fence language as
+   data-lang on the wrapper so the drafting-style material label can be drawn
+   in CSS. Upstream only emits .codeblock-title when a fence carries an
+   explicit title= attribute, and none of ours do.
+
+   Safe with assets/js/code.js: it inserts the copy button as
+   highlightWrapper.firstChild and resolves .highlight as a descendant, so
+   adding an attribute to the wrapper changes nothing for it. */ -}}
+{{- $title := or .Attributes.title "" -}}
+{{- $lang := or .Type "text" -}}
+<div class="highlight-wrapper" data-lang="{{ $lang }}">
+  {{- with $title -}}
+    <div class="codeblock-title">
+      {{- . -}}
+    </div>
+  {{- end -}}
+  {{- transform.Highlight .Inner $lang .Options -}}
+</div>

@@ -1,0 +1,137 @@
+{{- /* ==========================================================================
+   Drawing Set — image render hook.
+   Derived from Blowfish v2.105.0 layouts/_default/_markup/render-image.html.
+
+   PRESERVED from upstream: page-resource / remote / SVG branching, responsive
+   srcset, lazy + async + fetchpriority, medium-zoom (data-zoom-src), and
+   .Attributes passthrough.
+
+   [DWG] changes, each with a reason:
+     1. Animated formats (gif, apng) bypass .Resize entirely. Hugo's image
+        pipeline decodes only the FIRST FRAME, so resizing silently kills the
+        animation -- which would break the SDKMAN tab-completion GIF.
+     2. Corrected `sizes`. Upstream says 65vw for mobile, but the body is
+        px-6 (1.5rem each side), so at 360px the column is 312px = 86.7vw.
+        The browser was under-selecting and plates rendered soft.
+     3. `class` is MERGED with author attributes rather than emitted twice
+        (upstream's `range .Attributes` would produce a duplicate attribute).
+     4. A figure becomes a PLATE (framed, numbered) iff it has a markdown
+        title: ![alt](src "caption"). Untitled images stay plain. This matches
+        the drawing-set convention that only figures are numbered, and it
+        keeps screenshots/logos/GIFs out of the plate sequence.
+     5. warnf when a non-remote image resolves to nothing -- resources.Get
+        reads assets/ ONLY, never static/, so this catches any image left
+        behind by the page-bundle migration instead of failing silently.
+
+   Deliberately NOT added: resources.GetRemote localisation of remote images.
+   No remote images remain in the content, and making the build depend on a
+   third party is a real risk -- the post's old SDKMAN SVG now 404s.
+
+   All visual styling lives in assets/css/custom.css. Plate numbering is a CSS
+   counter, not Hugo state: .Content is evaluated more than once per page and
+   out of document order (index.json, rss.xml, .Summary, .TableOfContents), so
+   a .Store/.Scratch counter drifts.
+   ========================================================================== */ -}}
+
+{{- define "RenderImageSimple" -}}
+  {{- $imgObj := .imgObj -}}
+  {{- $src := .src -}}
+  {{- $alt := .alt -}}
+  {{- $extra := .extra | default "" -}}
+  <img
+    class="my-0 rounded-md {{ $extra }}"
+    loading="lazy"
+    decoding="async"
+    fetchpriority="low"
+    alt="{{ $alt }}"
+    src="{{ $src }}"
+    {{ with $imgObj -}}
+      {{ with .Width }}width="{{ . }}"{{ end }}
+      {{ with .Height }}height="{{ . }}"{{ end }}
+      data-zoom-src="{{ .RelPermalink }}"
+    {{- end }}>
+{{- end -}}
+
+{{- define "RenderImageResponsive" -}}
+  {{- /* sizes: below md the plate fills the padded column (~87vw at 360px);
+         at md+ it is bounded by the prose measure (max-w-prose, 65ch). */ -}}
+  {{- $imgObj := .imgObj -}}
+  {{- $alt := .alt -}}
+  {{- $w := $imgObj.Width -}}
+
+  {{- $img640 := $imgObj -}}
+  {{- $img960 := $imgObj -}}
+  {{- $img1440 := $imgObj -}}
+  {{- if gt $w 640 }}{{ $img640 = $imgObj.Resize "640x" }}{{ end -}}
+  {{- if gt $w 960 }}{{ $img960 = $imgObj.Resize "960x" }}{{ end -}}
+  {{- if gt $w 1440 }}{{ $img1440 = $imgObj.Resize "1440x" }}{{ end -}}
+
+  {{- $srcset := printf "%s 640w, %s 960w, %s 1440w"
+      $img640.RelPermalink $img960.RelPermalink $img1440.RelPermalink -}}
+
+  <img
+    class="my-0 rounded-md"
+    loading="lazy"
+    decoding="async"
+    fetchpriority="auto"
+    alt="{{ $alt }}"
+    {{ with $imgObj.Width }}width="{{ . }}"{{ end }}
+    {{ with $imgObj.Height }}height="{{ . }}"{{ end }}
+    src="{{ $img960.RelPermalink }}"
+    srcset="{{ $srcset }}"
+    sizes="(min-width: 853px) min(44rem, 60vw), 88vw"
+    data-zoom-src="{{ $imgObj.RelPermalink }}">
+{{- end -}}
+
+{{- $disableOpt := .Page.Site.Params.disableImageOptimizationMD | default false -}}
+{{- $urlStr := .Destination | safeURL -}}
+{{- $url := urls.Parse $urlStr -}}
+{{- $altText := .Text -}}
+{{- $caption := .Title -}}
+{{- $isRemote := findRE "^(https?|data)" $url.Scheme -}}
+{{- $resource := "" -}}
+
+{{- if not $isRemote -}}
+  {{- $resource = or ($.Page.Resources.GetMatch $urlStr) (resources.Get $urlStr) -}}
+  {{- if not $resource -}}
+    {{- warnf "[DWG] image %q not found as a page resource or under assets/ -- rendering unoptimised (page: %s). Note resources.Get never reads static/." $urlStr $.Page.Path -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* [DWG 4] plate iff titled; [DWG 3] merge rather than duplicate class */ -}}
+{{- $classes := slice (cond (ne $caption "") "dwg-plate" "dwg-figure") -}}
+{{- with .Attributes.class }}{{ $classes = $classes | append . }}{{ end -}}
+
+<figure
+  class="{{ delimit $classes " " }}"
+  {{- range $k, $v := .Attributes -}}
+    {{- if and $v (ne $k "class") -}}
+      {{- printf " %s=%q" $k ($v | transform.HTMLEscape) | safeHTMLAttr -}}
+    {{- end -}}
+  {{- end -}}>
+  {{- if $isRemote -}}
+    {{- template "RenderImageSimple" (dict "imgObj" "" "src" $urlStr "alt" $altText) -}}
+  {{- else if $resource -}}
+    {{- $sub := $resource.MediaType.SubType -}}
+    {{- $isSVG := eq $sub "svg" -}}
+    {{- /* [DWG 1] .Resize would flatten these to their first frame */ -}}
+    {{- $isAnimated := in (slice "gif" "apng") $sub -}}
+    {{- if and (not $disableOpt) (not $isSVG) (not $isAnimated) -}}
+      {{- template "RenderImageResponsive" (dict "imgObj" $resource "alt" $altText) -}}
+    {{- else if $isSVG -}}
+      {{- /* nozoom: magnifying a vector mark is meaningless */ -}}
+      {{- template "RenderImageSimple"
+            (dict "imgObj" "" "src" $resource.RelPermalink "alt" $altText "extra" "nozoom") -}}
+    {{- else -}}
+      {{- template "RenderImageSimple"
+            (dict "imgObj" $resource "src" $resource.RelPermalink "alt" $altText
+                  "extra" (cond $isAnimated "dwg-animated" "")) -}}
+    {{- end -}}
+  {{- else -}}
+    {{- template "RenderImageSimple" (dict "imgObj" "" "src" $urlStr "alt" $altText) -}}
+  {{- end -}}
+
+  {{- with $caption -}}
+    <figcaption>{{ . | markdownify }}</figcaption>
+  {{- end -}}
+</figure>
