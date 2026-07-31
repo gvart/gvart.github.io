@@ -1,0 +1,22 @@
+content/post/2026/07/why_not_web_server_part_0_basics/index.md
+  s_a4bfedf02d8acb::t_2b63d585057efc 32-33
+assets/css/custom.css
+  s_a4bfedf02d8acb::t_fad2e21b290340 952,963-995
+  s_a4bfedf02d8acb::t_af0c1e8b26331b 996
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "b5a189f4200fee7034e131395ba4f9131526e601",
+  "prompts": {},
+  "sessions": {
+    "s_a4bfedf02d8acb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4fccd82b-4c40-4c86-9292-4b188bb2ca1d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vladlen Gladis <vladlen.gladis@deliveryhero.com>"
+    }
+  }
+}
