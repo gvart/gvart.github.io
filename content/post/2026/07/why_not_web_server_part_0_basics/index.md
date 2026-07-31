@@ -1,19 +1,26 @@
 +++
-title = "[Part 0]. Build your own web-server using Java and a bit of curiosity - Foundation"
+# The "[Part 0]." prefix is deliberately NOT in the title: Blowfish's series
+# widget renders each entry as "Part {series_order}: {title}", so keeping it
+# here would read "Part 0: [Part 0]. Build your own...".
+title = "Build your own web-server using Java and a bit of curiosity - Foundation"
 date = "2026-07-21"
 description = "My journey of building a web-server from scratch using Java 25."
 
-# Kept as a draft: this post was never deployed (it lived only on the
-# why-not-webserver-part-0 branch) and still carried literal "TODO"
-# placeholders. Flip to false to publish.
+# Kept as a draft: this post has never been deployed. Flip to false to publish.
+# Note the deploy workflow only triggers on `main`, so pushing this branch
+# publishes nothing either way.
 draft = true
 
 showTableOfContents = true
 
-# Series name must be a SINGLE WORD. Blowfish's series_base.html looks the
-# term up with strings.ToLower, while Hugo keys the taxonomy by the *urlized*
-# term -- so "Why Not A Webserver" would silently list zero parts.
-series = ["Webserver"]
+# Drives the "part of a series" widget. `series_order` is what the widget
+# prints after "Part", so 0 here gives "Part 0: This Article" -- matching the
+# post's own Part 0 framing. Later parts just need series_order = 1, 2, ...
+#
+# Multi-word names are safe: series_base.html looks the term up with
+# strings.ToLower, and Hugo keys .Site.Taxonomies.series by the lowercased
+# term (only the URL gets urlized, to /series/why-not-a-webserver/).
+series = ["Why Not A Webserver"]
 series_order = 0
 
 keywords = [
