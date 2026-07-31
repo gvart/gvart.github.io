@@ -1,0 +1,19 @@
+content/post/2026/07/why_not_web_server_part_0_basics/index.md
+  s_a4bfedf02d8acb::t_ab12ea894d28ed 2-5,9-11,16-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "8851544576f7b33977b4438d0315c00c24abdb6a",
+  "prompts": {},
+  "sessions": {
+    "s_a4bfedf02d8acb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4fccd82b-4c40-4c86-9292-4b188bb2ca1d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vladlen Gladis <vladlen.gladis@deliveryhero.com>"
+    }
+  }
+}
