@@ -45,6 +45,14 @@ fingerprintAlgorithm = "sha512"
 # X/Twitter handle. Consumed by Hugo's _internal/twitter_cards.html, which
 # requires site.Params.social to be a MAP (it calls reflect.IsMap on it).
 # Clarity's flat `twitter = "@..."` param would NOT work.
+[seo]
+  # Blowfish defaults to ["summary", "description", "site"], which lets a page's
+  # `summary` win <meta name="description"> while og:description keeps using
+  # `description` -- two different descriptions on the same page. Reversed so
+  # each field has exactly one job: `description` drives both meta tags,
+  # `summary` only drives the post card, list pages and the search overlay.
+  metaDescriptionOrder = ["description", "summary", "site"]
+
 [social]
   twitter = "@VladlenGladis"
 

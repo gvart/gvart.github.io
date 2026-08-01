@@ -11,6 +11,15 @@ enableRobotsTXT = true
 buildDrafts = false
 buildFuture = false
 
+# REQUIRED because of buildFuture = false. Without it, a bare
+# `date = "2026-08-02"` in front matter parses as midnight *UTC*, so a post
+# dated "today" while it is still the previous day in UTC counts as a future
+# page and is dropped from the build silently -- no error, the page simply
+# does not exist in public/. Pinning the zone makes bare dates mean midnight
+# local, which is what the dates are actually written in, and makes CI
+# (which runs in UTC) agree with local builds.
+timeZone = "Europe/Berlin"
+
 # Auto-summary length, in words. Blowfish's default of 0 yields blank snippets
 # in the search overlay, which reads as a broken index. This does not affect
 # meta descriptions: head.html builds those from .Params.summary, not .Summary.

@@ -637,41 +637,79 @@ figure.dwg-portrait > img {
 
 /* ---- Chroma tokens -------------------------------------------------------
    Coverage derived from Blowfish's shipped github / github-dark token list
-   (the union of every class Chroma emits). Encoded by LIGHTNESS plus one hue:
-   strings are the brightest thing (the payload), punctuation the dimmest
-   (structure recedes), cyan carries keywords and types. Amber appears
-   nowhere -- it is reserved for callouts.
+   (the union of every class Chroma emits). Colours come from the author's IDE
+   scheme -- Islands Dark / IntelliJ Light -- see assets/css/schemes/
+   drawing-set.css for the extraction and the contrast measurements.
+
+   The GROUPING below is not a straight port of Chroma's own semantics: it is
+   the mapping that makes Chroma's coarse classes land where IntelliJ puts
+   them. Four regroupings are load-bearing, each calibrated against the actual
+   token census of the built site rather than Chroma's docs:
+
+     .kt -> keyword   Java primitives (`int`, `void`) are keywords in IntelliJ,
+                      not types. Types themselves are plain text there.
+     .nt -> keyword   All 117 .nt tokens on this site are YAML keys, and
+                      IntelliJ's YAML_SCALAR_KEY falls back to KEYWORD.
+     .na -> name      Chroma tags member-access-after-dot as .na, and 60+ of
+                      the 67 instances are method calls (`.getBean(`), which
+                      IntelliJ renders as methods. Fields would be purple.
+     .se -> keyword   DEFAULT_VALID_STRING_ESCAPE is the keyword colour.
+
+   Weight and italic bumps are gone: Islands Dark sets FONT_TYPE on almost
+   nothing, so keywords, classes, methods and annotations are regular weight,
+   and comments are upright. Only .no keeps an italic (DEFAULT_CONSTANT) and
+   the generic/diff classes keep their emphasis, since those are markdown
+   semantics rather than syntax tokens.
    ---------------------------------------------------------------------- */
 .chroma { color: var(--dwg-code-fg); background-color: var(--dwg-code-bg); }
 .chroma .line { display: flex; }
 .chroma .cl { display: inline; }
 
-.chroma .n, .chroma .nx, .chroma .no, .chroma .ni,
+/* Blowfish's own token sheet lands in the SAME bundle as UNSCOPED rules --
+   `.nc{color:#f0883e;font-weight:700}`, `.cm{font-style:italic}`, and a dozen
+   more. Our `.chroma .x` selectors outrank them on colour, but a bare
+   font-weight/font-style we never declare survives, so .nc/.nd/.nf/.o/.ow and
+   every comment class would keep a bold or italic the IDE does not have.
+   Reset once here; the intentional exceptions below outrank this (0,2,0). */
+.chroma span { font-weight: 400; font-style: normal; }
+
+.chroma .n, .chroma .nx, .chroma .ni,
 .chroma .nl, .chroma .ne, .chroma .py { color: var(--dwg-code-fg); }
 
+/* .l/.ld/.sd are NOT strings here. Every instance on this site is a YAML
+   scalar -- .l plain (`java11`), .sd a block-scalar body (`|` / `>` run-on
+   script) -- and YAMLHighlighter declares YAML_SCALAR_VALUE and
+   YAML_SCALAR_LIST with no Default fallback, so the IDE paints them as plain
+   text. Only QUOTED scalars fall back to STRING, and those arrive as .s1/.s2.
+   Same for .l in the http fences: HTTP_REQUEST_PARAMETER_VALUE is A9B7C6.
+   A Python docstring would also be .sd and would want the string colour; add
+   a [data-lang="python"] override if a Python fence ever lands here.        */
+.chroma .l, .chroma .ld, .chroma .sd { color: var(--dwg-code-fg); }
+
 .chroma .k, .chroma .kc, .chroma .kd, .chroma .kn,
-.chroma .kp, .chroma .kr {
-  color: var(--dwg-code-keyword);
-  font-variation-settings: "wght" 500;
-}
+.chroma .kp, .chroma .kr, .chroma .kt,
+.chroma .nt, .chroma .nb, .chroma .bp { color: var(--dwg-code-keyword); }
 
-.chroma .kt, .chroma .nc, .chroma .nn,
-.chroma .nb, .chroma .bp, .chroma .nt { color: var(--dwg-code-type); }
+.chroma .nc, .chroma .nn { color: var(--dwg-code-type); }
 
-.chroma .nf, .chroma .fm {
-  color: var(--dwg-code-name);
-  font-variation-settings: "wght" 500;
-}
-.chroma .nd { color: var(--dwg-code-type); font-style: italic; }
-.chroma .na { color: var(--dwg-code-var); }
+.chroma .nf, .chroma .fm, .chroma .na { color: var(--dwg-code-name); }
+
+.chroma .nd { color: var(--dwg-code-annotation); }
+.chroma .no { color: var(--dwg-code-var); font-style: italic; }
 .chroma .nv, .chroma .vc, .chroma .vg,
 .chroma .vi, .chroma .vm { color: var(--dwg-code-var); }
 
 .chroma .s, .chroma .sa, .chroma .sb, .chroma .sc,
-.chroma .sd, .chroma .s1, .chroma .s2, .chroma .sh,
-.chroma .sx, .chroma .ss, .chroma .dl,
-.chroma .l, .chroma .ld { color: var(--dwg-code-string); }
-.chroma .se, .chroma .si, .chroma .sr { color: var(--dwg-code-type); }
+.chroma .s1, .chroma .s2, .chroma .sh,
+.chroma .sx, .chroma .ss, .chroma .dl { color: var(--dwg-code-string); }
+.chroma .se, .chroma .si, .chroma .sr { color: var(--dwg-code-keyword); }
+
+/* Chroma collapses YAML keys and JSON property keys into one class, but the
+   IDE does not: YAML_SCALAR_KEY falls back to KEYWORD while JSON.PROPERTY_KEY
+   falls back to INSTANCE_FIELD (both read out of the plugin bytecode). The
+   keyword colour above is right for the 117 YAML keys; this reclaims the JSON
+   ones off the data-lang Hugo already puts on the wrapper. */
+.highlight-wrapper[data-lang="json"] .chroma .nt { color: var(--dwg-code-var); }
 
 .chroma .m, .chroma .mb, .chroma .mf, .chroma .mh,
 .chroma .mi, .chroma .mo, .chroma .il { color: var(--dwg-code-number); }
@@ -680,13 +718,13 @@ figure.dwg-portrait > img {
 .chroma .p { color: var(--dwg-code-dim); }
 
 .chroma .c, .chroma .ch, .chroma .cm, .chroma .c1,
-.chroma .cs, .chroma .cp, .chroma .cpf {
-  color: var(--dwg-code-comment);
-  font-style: italic;
-}
+.chroma .cs, .chroma .cp, .chroma .cpf { color: var(--dwg-code-comment); }
 
-/* Diff / generic. The one place a third hue is unavoidable: diff semantics
-   are not expressible in lightness. No diff fences exist today. */
+/* Diff / generic. --dwg-code-err is IntelliJ's BAD_CHARACTER and -ins its
+   ADDED_LINES_COLOR. No diff fences exist today. .err does fire 37 times in
+   the AWS Lambda post -- Chroma's Dockerfile lexer wraps bare newlines in it
+   -- but every one of those spans is whitespace only, so nothing renders red.
+   Verified in the browser, not inferred. */
 .chroma .err, .chroma .gr, .chroma .gt { color: var(--dwg-code-err); background: none; }
 .chroma .gd {
   color: var(--dwg-code-err);
@@ -949,8 +987,7 @@ html.dark .prose blockquote { color: rgba(var(--color-neutral-300), 1); }
 .toc a { color: var(--dwg-caption); font-family: var(--font-mono); letter-spacing: 0.04em; }
 .toc a.active { color: var(--dwg-plate-no); text-decoration-line: none; }
 .toc > details > summary,
-.toc-inside > summary,
-details.mt-0 > summary {
+.toc-inside > summary {
   border-radius: 0;
   background-color: var(--dwg-surface);
   color: var(--dwg-caption);
@@ -960,6 +997,40 @@ details.mt-0 > summary {
   text-transform: uppercase;
 }
 #TOCView { border-radius: 0; }
+
+/* Series widget. series.html / series-closed.html wrap it in
+   <details class="mt-2 mb-5 overflow-hidden rounded-lg ms-0 ps-5"> with a
+   summary carrying bg-primary-200 / dark:bg-primary-800 -- a solid filled bar
+   that matches nothing else here. Reduced to a hairline drafting header.
+   (An earlier selector targeted details.mt-0, which never matched.) */
+details.mt-2.mb-5 {
+  border-radius: 0;
+  border: 1px solid var(--dwg-rule);
+  padding-inline-start: 0 !important;   /* cancels ps-5, which offsets the box */
+  margin-inline-start: 0;
+}
+details.mt-2.mb-5 > summary {
+  border-radius: 0;
+  background-color: var(--dwg-surface);
+  color: var(--dwg-caption);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.5rem 0.75rem;
+  margin-inline-start: 0;
+}
+/* The part list: each row is a dotted-border div inside the details. */
+details.mt-2.mb-5 > div {
+  margin-inline-start: 0;
+  padding: 0.45rem 0.75rem;
+  border-inline-start: 1px solid var(--dwg-rule);
+  border-style: solid;
+  font-size: 0.8125rem;
+}
+details.mt-2.mb-5 > div a { color: rgba(var(--color-primary-400), 1); }
+html:not(.dark) details.mt-2.mb-5 > div a { color: rgba(var(--color-primary-600), 1); }
 
 /* Sharing links (sharing-links.html) */
 section.flex.flex-row.flex-wrap.justify-center a {

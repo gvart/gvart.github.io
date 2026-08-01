@@ -46,9 +46,9 @@
      L* 94 paper, which forces primary-600 to L* <= 46. Compressing the top
      of the ramp is the only way to honour the anchor and still pass AA.    */
   --color-primary-50: 236, 251, 250;     /* #ECFBFA */
-  --color-primary-100: 212, 245, 243;    /* #D4F5F3  numeric literals (dark) */
+  --color-primary-100: 212, 245, 243;    /* #D4F5F3  copy-button hover (light) */
   --color-primary-200: 174, 234, 232;    /* #AEEAE8  annotations, skip-link bg */
-  --color-primary-300: 133, 223, 220;    /* #85DFDC  types, YAML keys */
+  --color-primary-300: 133, 223, 220;    /* #85DFDC  ramp continuity only */
   --color-primary-400:  95, 211, 208;    /* #5FD3D0  ANCHOR — dark links, keywords, focus */
   --color-primary-500:  53, 168, 165;    /* #35A8A5  dark accent, plate numbers */
   --color-primary-600:  21, 116, 114;    /* #157472  light links */
@@ -65,7 +65,7 @@
   --color-secondary-50: 241, 245, 248;   /* #F1F5F8 */
   --color-secondary-100: 223, 233, 239;  /* #DFE9EF */
   --color-secondary-200: 198, 215, 225;  /* #C6D7E1 */
-  --color-secondary-300: 166, 191, 206;  /* #A6BFCE  shell vars, attribute names */
+  --color-secondary-300: 166, 191, 206;  /* #A6BFCE  ramp continuity only */
   --color-secondary-400: 143, 173, 191;  /* #8FADBF  inline code (dark) */
   --color-secondary-500: 104, 139, 159;  /* #688B9F */
   --color-secondary-600:  76, 107, 127;  /* #4C6B7F */
@@ -96,22 +96,34 @@
   --dwg-annotation-bg: #FAEBDA;
   --dwg-annotation-ink: #6E3708;    /* 8.12:1 on --dwg-annotation-bg */
 
-  /* Chroma tokens — LIGHT */
+  /* Chroma tokens — LIGHT: IntelliJ Light -----------------------------------
+     The editor scheme Islands Light resolves to (ManyIslandsLight.theme.json
+     declares editorScheme "Light" -> themes/Light.xml, scheme name
+     "IntelliJ Light"). Extracted values, not eyeballed.
+
+     --dwg-code-bg stays the plate field: only the INK comes from the IDE, so
+     code blocks remain part of the drawing set rather than a pasted-in
+     screenshot of an editor.
+
+     Three tokens are nudged because IntelliJ ships them below WCAG AA. Each is
+     the original hue mixed toward black by the smallest amount that clears the
+     threshold, so the hue is unchanged. Ratios are against --dwg-code-bg.    */
   --dwg-code-bg: #F3F7FA;
-  --dwg-code-fg: #1B3752;
-  --dwg-code-dim: #4F6B84;
-  --dwg-code-comment: #4F6B84;
-  --dwg-code-keyword: #0F5B59;
-  --dwg-code-type: #157472;
-  --dwg-code-name: #0B1B2B;
-  --dwg-code-string: #061320;
-  --dwg-code-number: #157472;
-  --dwg-code-var: #3A5568;
-  --dwg-code-op: #37536B;
-  --dwg-code-lineno: #7A96AC;
-  --dwg-code-hl: rgba(21, 116, 114, 0.10);
-  --dwg-code-err: #A33A22;
-  --dwg-code-ins: #1F6B45;
+  --dwg-code-fg: #080808;           /* 18.59:1  TEXT                         */
+  --dwg-code-dim: #080808;          /* punctuation is NOT dimmed in IntelliJ */
+  --dwg-code-comment: #717171;      /*  4.53:1  #8C8C8C +19% black           */
+  --dwg-code-keyword: #0033B3;      /*  9.18:1  DEFAULT_KEYWORD              */
+  --dwg-code-type: #080808;         /* 18.59:1  classes are plain text       */
+  --dwg-code-name: #00627A;         /*  6.44:1  DEFAULT_FUNCTION_DECLARATION */
+  --dwg-code-string: #067D17;       /*  4.93:1  DEFAULT_STRING               */
+  --dwg-code-number: #1750EB;       /*  5.76:1  DEFAULT_NUMBER               */
+  --dwg-code-var: #871094;          /*  7.70:1  DEFAULT_INSTANCE_FIELD       */
+  --dwg-code-annotation: #83710B;   /*  4.50:1  DEFAULT_METADATA #9E880D +17% black */
+  --dwg-code-op: #080808;           /* 18.59:1  DEFAULT_OPERATION_SIGN       */
+  --dwg-code-lineno: #8F8F8F;       /*  3.00:1  #ADADAD +17% black           */
+  --dwg-code-hl: rgba(8, 8, 8, 0.06);   /* stand-in for CARET_ROW_COLOR      */
+  --dwg-code-err: #C64350;          /*  4.51:1  BAD_CHARACTER +20% black     */
+  --dwg-code-ins: #497D4D;          /*  4.51:1  ADDED_LINES_COLOR +14% black */
 }
 
 /* DARK appearance. The 31 --color-* values above are shared; only the
@@ -131,23 +143,34 @@ html.dark {
   --dwg-annotation-bg: #222930;     /* amber @ ~10% over the ground */
   --dwg-annotation-ink: #E8EEF2;    /* 12.57:1 on --dwg-annotation-bg */
 
-  /* Chroma tokens — DARK. Encoded by lightness, not hue: strings are the
-     brightest thing (the payload), punctuation the dimmest (structure
-     recedes), cyan carries keywords and types. The two dimmest tokens sit at
-     4.86:1, so nothing in 19 code blocks drops below AA. */
+  /* Chroma tokens — DARK: Islands Dark --------------------------------------
+     The author's own IDE scheme (IntelliJ IDEA 2026.2, IU-262.8665.337),
+     extracted verbatim from themes/islands/IslandSchemeDark.xml in
+     lib/intellij.platform.ide.impl.jar. Encoded by HUE, not lightness: the
+     previous ramp deliberately flattened everything to one cyan and let
+     lightness carry meaning, which is the opposite of what an IDE does.
+
+     --dwg-code-bg stays #12283D, NOT IntelliJ's #191A1C: the near-black
+     neutral would read as a foreign surface on a blue-grey page. Every token
+     below was re-measured against #12283D and still clears AA, so keeping the
+     plate costs nothing (values on IntelliJ's own ground run ~0.9 higher).
+
+     Two tokens are nudged because IntelliJ ships them below AA — the original
+     hue mixed toward white by the smallest amount that clears the threshold. */
   --dwg-code-bg: #12283D;
-  --dwg-code-fg: #C2D4E0;           /*  9.87:1 */
-  --dwg-code-dim: #7A96AC;          /*  4.86:1 */
-  --dwg-code-comment: #7A96AC;      /*  4.86:1 */
-  --dwg-code-keyword: #5FD3D0;      /*  8.39:1 */
-  --dwg-code-type: #85DFDC;         /*  9.73:1 */
-  --dwg-code-name: #E8EEF2;         /* 12.85:1 */
-  --dwg-code-string: #E8EEF2;       /* 12.85:1 */
-  --dwg-code-number: #D4F5F3;       /* 13.00:1 */
-  --dwg-code-var: #A6BFCE;          /*  7.90:1 */
-  --dwg-code-op: #A2BACB;           /*  7.46:1 */
-  --dwg-code-lineno: #6B87A0;       /*  4.00:1 — non-content, exempt */
-  --dwg-code-hl: rgba(95, 211, 208, 0.10);
-  --dwg-code-err: #E8927E;
-  --dwg-code-ins: #7FD3A8;
+  --dwg-code-fg: #BCBEC4;           /*  8.09:1  TEXT                         */
+  --dwg-code-dim: #BCBEC4;          /* punctuation is NOT dimmed in IntelliJ */
+  --dwg-code-comment: #898D93;      /*  4.51:1  #7A7E85 +11% white           */
+  --dwg-code-keyword: #CF8E6D;      /*  5.54:1  DEFAULT_KEYWORD              */
+  --dwg-code-type: #BCBEC4;         /*  8.09:1  DEFAULT_CLASS_REFERENCE      */
+  --dwg-code-name: #56A8F5;         /*  5.95:1  DEFAULT_FUNCTION_DECLARATION */
+  --dwg-code-string: #6AAB73;       /*  5.50:1  DEFAULT_STRING               */
+  --dwg-code-number: #2AACB8;       /*  5.51:1  DEFAULT_NUMBER               */
+  --dwg-code-var: #C77DBB;          /*  5.07:1  DEFAULT_INSTANCE_FIELD       */
+  --dwg-code-annotation: #B3AE60;   /*  6.54:1  DEFAULT_METADATA             */
+  --dwg-code-op: #BCBEC4;           /*  8.09:1  DEFAULT_OPERATION_SIGN       */
+  --dwg-code-lineno: #6B7077;       /*  3.01:1  #4B5059 +18% white           */
+  --dwg-code-hl: rgba(188, 190, 196, 0.09);  /* stand-in for CARET_ROW_COLOR */
+  --dwg-code-err: #F75464;          /*  4.59:1  BAD_CHARACTER                */
+  --dwg-code-ins: #619A66;          /*  4.53:1  ADDED_LINES_COLOR +8% white  */
 }
