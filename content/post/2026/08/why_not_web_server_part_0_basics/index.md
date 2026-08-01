@@ -5,7 +5,7 @@ date = "2026-08-02"
 description = "How a web-server actually works, from the 7 OSI layers down to raw TCP and UDP sockets in plain Java 25, client and server, with no framework involved."
 
 
-summary = "My journey of building a web-server from scratch, repeating fundamentals and check how to use plain TCP and UDP in Java."
+summary = "My journey of building a web-server from scratch, revisiting the fundamentals and learning how to use plain TCP and UDP in Java."
 
 draft = false
 
@@ -43,13 +43,13 @@ Many of us know how to build a **static webpage**, **REST-API**, a **GraphQL-API
 The whole purpose of these top-level abstractions is to simplify your life as a developer, so you don't have to worry about the specs of different protocols and technologies, which helps you to focus on the business logic
 and boost your productivity, on the other hand, you start forgetting how things actually work...
 
-Do you really need to know that? In my opinion **no**, since I meet many senior engineers who have no idea what is happening
-behind these magic annotations which they use every day to write production code not mentioning the low-level protocols and how data is actually being received by the server and sent back to the client, but this
-doesn't make them bad engineers, this knowledge became obsolete in a way, and is not a requirement in many companies to write software.
+Do you really need to know that? In my opinion **no**. I meet plenty of senior engineers who have no idea what happens behind the magic annotations they use every day to write production code,
+not to mention the low-level protocols and how data actually reaches the server and travels back to the client. That doesn't make them bad engineers. This knowledge became obsolete in a way,
+and in many companies it's simply not a requirement for writing software.
 
-Taking all this into consideration, why am I still writing? My answer is because **I'm curious**, I've always liked to deep dive into the open source code, debug it and sometimes fork it to modify certain parts which
-were specific to my project. So to build our own web-server we must _debug_ the protocol to understand what is happening when you create a server socket, parse the request payload and respond to the client, why we have 7 OSI
-levels, why they matter, and finally understand what is happening when you place that magical annotation on top of your method which exposes it as a REST endpoint, a static page or a WebSocket.
+So why am I still writing? Because **I'm curious**. I've always liked to deep dive into open source code, debug it, and sometimes fork it to modify the parts that were specific to my project.
+To build our own web-server we have to _debug_ the protocol itself: what happens when you create a server socket, parse the request payload and respond to the client, why we have 7 OSI
+levels and why they matter, and finally what really happens when you put that magical annotation on top of your method to expose it as a REST endpoint, a static page or a WebSocket.
 
 If your curiosity is the characteristic that motivated you to do your day-to-day job, then let's dive into this topic and start to learn and craft.
 
@@ -80,7 +80,7 @@ Content-Length: 59
 
 {"content": "Buy food for my cat", "dueDate": "12-12-2027"}
 ```
-That's **214 bytes** of plain text (155 bytes of headers + the empty line, and 59 bytes of body - the same 59 you see in `Content-Length`).
+That's **214 bytes** of plain text (155 bytes of headers including the empty line, and 59 bytes of body - the same 59 you see in `Content-Length`).
 Keep this number in mind, every layer below will wrap it into something bigger.
 
 ### 6. Presentation layer
@@ -102,10 +102,11 @@ random-looking bytes instead of the nice text above.
 The session layer makes sure that the connection between the client and server is established and stays open until data is processed by the server (be it by returning a 
 response with payload, simple status code) or until an error occurs.
 
-The closest thing to a "session" in our request is connection reuse. In HTTP/1.1 the connection stays open by default, and clients still send the header explicitly:
+The closest thing to a "session" in our request is connection reuse. In HTTP/1.1 the connection stays open by default, and many clients still send the header explicitly:
 ```http
 Connection: keep-alive
 ```
+(it's left out of the request above so the byte count stays easy to follow)
 Thanks to that, the same TCP connection is reused for the next request (i.e. a `GET /api/v1/todo` to list the TODOs right after creating one),
 so you don't pay for a new handshake every time.
 
@@ -113,7 +114,7 @@ so you don't pay for a new handshake every time.
 > These layers don't really exist any more: in the TCP/IP stack they are part of the application layer, handled by libraries (TLS, gzip, JSON serialization).
 
 ### 4. Transport layer
-This is where low-level protocols are TCP and UDP (in our case HTTP 1.1/2 is built on top of TCP and HTTP 3 is over UDP), so here the client payload is divided in segments (or datagrams for UDP) and sent to the server (and back), on the server 
+This is where the low-level protocols TCP and UDP live (in our case HTTP 1.1/2 is built on top of TCP and HTTP 3 is over UDP), so here the client payload is divided in segments (or datagrams for UDP) and sent to the server (and back), on the server 
 side these segments are received and reassembled into data. An additional nice feature of this layer is **ports**, with which you're familiar if you ever bootstrapped a web-app.
 
 Our 214 bytes get a 20 byte TCP header in front of them:
@@ -168,7 +169,7 @@ layer 3 unwraps the IP packet, layer 4 checks the destination port and hands the
 and only then our web-server sees a text blob starting with `POST /api/v1/todo HTTP/1.1` that it has to parse.
 The response (i.e. `201 Created`) then travels down the very same 7 layers on the server and back up on the client.
 
-## How does the connection work?
+## Meet the socket
 As stated in [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/html/#what-is-a-socket), a socket is a way of communicating 
 with other programs using standard Unix file descriptors. A file descriptor is just an integer that your process uses to refer to an open file (the OS uses it to look up the actual I/O object).
 And the nice part is that the "file" behind it can be a network connection. That's why you can read() and write() a socket like any other file.
@@ -375,7 +376,7 @@ And that's it, start both the server and the client and they'll exchange message
 Note that a single socket already handles many clients here, since each datagram carries its own return address, so there's no per-connection state to keep, that's exactly what makes UDP servers cheap.
 For now this is enough to get familiar with the basic UDP workflow in Java, we'll go deeper in the upcoming posts where we try to implement HTTP/3 for our web-server!
 
-## Outcome
+## Conclusion
 Now that you know how to work with TCP and UDP, feel free to experiment and build something yourself, or check out the chat application [I've built](https://github.com/gvart/why-not-webserver/tree/why-not-webserver-part-0#tcp-chat)
 and the [UDP metric collector](https://github.com/gvart/why-not-webserver/tree/why-not-webserver-part-0#udp-metrics), both using the concepts shared above.
 You could also try rebuilding one of the existing protocols that run on top of TCP or UDP, or who knows, you may end up designing your own protocol with custom specs!
