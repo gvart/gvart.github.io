@@ -30,11 +30,6 @@ summaryLength = 30
 # for remote images, and cold CI runners are slow.
 timeout = "60s"
 
-# GA4 measurement ID. Blowfish does not use Hugo's internal GA template, but
-# this root key populates site.Config.Services.GoogleAnalytics.ID, which its
-# own partials/analytics/ga.html reads. Gated behind hugo.IsProduction, so it
-# only emits with HUGO_ENVIRONMENT=production.
-googleAnalytics = "G-JECGWJF0WM"
 
 [pagination]
   pagerSize = 10
