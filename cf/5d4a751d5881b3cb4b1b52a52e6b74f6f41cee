@@ -1,0 +1,21 @@
+config/_default/params.toml
+  s_7b19734582a402::t_fe258d3ab736d3 166-168
+  s_7b19734582a402::t_735f9337d0e6bb 169-170
+  s_7b19734582a402::t_7bf456fef94683 164-165
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "cf5d4a751d5881b3cb4b1b52a52e6b74f6f41cee",
+  "prompts": {},
+  "sessions": {
+    "s_7b19734582a402": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2d912795-e679-40f9-bb0a-dadd85042f6a",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vladlen Gladis <vladlen.gladis@deliveryhero.com>"
+    }
+  }
+}
