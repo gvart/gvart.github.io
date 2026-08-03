@@ -161,3 +161,10 @@ fingerprintAlgorithm = "sha512"
   lang = "en"
   lightTheme = "light"
   darkTheme = "dark"
+
+[umamiAnalytics]
+  websiteid = "2350b7fe-b771-4692-aca8-e7be2172db02"
+  domain = "cloud.umami.is"
+  dataDomains = "gvart.dev"
+  enableTrackEvent = true
+  doNotTrack = false
